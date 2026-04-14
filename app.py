@@ -5,6 +5,14 @@ app = Flask("SquadUp")
 def home():
     return render_template('index.html')
 
+@app.route("/index")
+def login():
+    return render_template("index.html")
+
+@app.route("/login")
+def login():
+    return render_template("login.html")
+
 
 @app.route('/booking')
 def booking():
