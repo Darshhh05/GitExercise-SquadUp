@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Book Facility - SquadUp</title>
+</head>  
+<body>
+
+    <h1>Book a Sports Facility</h1>
+
+    <form method="POST" action="/book">
+
+        <!-- Select Facility -->
+        <label>Choose Facility</label><hr>
+        <select name="facility">
+            <option value="Badminton Court">Badminton Court</option>
+            <option value="Basketball Court">Basketball Court</option>
+            <option value="Swimming Pool">Swimming Pool</option>
+            <option value="Football Field">Football Field</option>
+        </select><br><br>
+
+        <!-- Select Date -->
+        <label>Select Date</label><br>
+        <input type="date" name="date" required><br><br>
+
+        <!-- Select Time-->
+        <label>Select Time</label><br>
+        <input type="time" name="time" required><br><br>
+
+        <!-- Submit -->
+        <button type="submit"></button>Book Now
+    </form>
+</body> 
+</html>
