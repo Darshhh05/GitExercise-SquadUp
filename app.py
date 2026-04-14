@@ -1,11 +1,16 @@
-from flask import Flask
+from flask import Flask, render_template,request
 app = Flask("SquadUp")
+
+@app.route('/')
+def home():
+    return render_template('index.html')
+
 
 @app.route('/booking')
 def booking():
     return render_template('booking.html')
 
-@app.route('/book', methods=[POST])
+@app.route('/book',methods=['POST'])
 def book():
     facility = request.form['facility form']
     date = request.form['date']
@@ -15,4 +20,4 @@ def book():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+ app.run(debug=True)
