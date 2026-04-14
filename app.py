@@ -1,10 +1,6 @@
 from flask import Flask, render_template,request
 app = Flask("SquadUp")
 
-@app.route('/')
-def home():
-    return render_template('index.html')
-
 @app.route("/index")
 def login():
     return render_template("index.html")
