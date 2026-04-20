@@ -27,9 +27,9 @@ def book():
     return f"Booked {facility} on {date} at {time}"
 
 if __name__ == '__main__':
-<<<<<<< HEAD
+
     app.run(debug=True)
 
 =======
     app.run(debug=True)
->>>>>>> 3d855d585b1868f37ae2828c77074620f26ed7b3
+
