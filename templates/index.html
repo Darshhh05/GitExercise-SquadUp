@@ -12,11 +12,11 @@
     <p>Your campus sports booking & team finder system</p>
 
     <nav>
-        <a href="/">Home</a> |
-        <a href="/login">Login</a> |
-        <a href="/dashboard">Dashboard</a> |
-        <a href="/booking">Book Facility</a>
-    </nav>
+    <a href="{{ url_for('home') }}">Home</a> |
+    <a href="{{ url_for('login') }}">Login</a> |
+    <a href="{{ url_for('dashboard') }}">Dashboard</a> |
+    <a href="{{ url_for('booking') }}">Book Facility</a>
+</nav>
 
 </body>
 </html>
