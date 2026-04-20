@@ -1,36 +1,39 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Book Facility - SquadUp</title>
-</head>  
+</head>
 <body>
-
     <h1>Book a Sports Facility</h1>
 
     <form method="POST" action="/book">
-
-        <!-- Select Facility -->
-        <label>Choose Facility</label><hr>
-        <select name="facility">
+        <label for="facility">Choose Facility</label><br>
+        <select id="facility" name="facility">
             <option value="Badminton Court">Badminton Court</option>
             <option value="Basketball Court">Basketball Court</option>
             <option value="Swimming Pool">Swimming Pool</option>
             <option value="Football Field">Football Field</option>
-        </select><br><br>
+        </select>
+        <br><br>
 
-        <!-- Select Date -->
-        <label>Select Date</label><br>
-        <input type="date" name="date" required><br><br>
+        <label for="date">Select Date</label><br>
+        <input type="date" id="date" name="date">
+        <br><br>
 
-        <!-- Select Time-->
-        <label>Select Time</label><br>
-        <input type="time" name="time" required><br><br>
+        <label for="time">Select Time</label><br>
+        <input type="time" id="time" name="time">
+        <br><br>
 
-        <!-- Submit -->
-        <button type="submit"></button>Book Now
+        <button type="submit">Book Now</button>
     </form>
 
     <br>
     <a href="{{ url_for('home') }}">Back to Home</a>
+
 </body> 
+=======
+</body>
+
 </html>
