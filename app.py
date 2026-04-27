@@ -117,7 +117,11 @@ def book():
     return f"Booked {facility} on {date} from {start_time} to {end_time}"
 
 
-<<<<<<< HEAD
+
+
+
+
+
 #  CREATE EVENT
 @app.route('/create_event', methods=['POST'])
 def create_event():
@@ -181,7 +185,9 @@ def join_event(event_id):
 if __name__ == '__main__':
     app.run(debug=True)
 
-=======
+
+
+
 if __name__ == '__main__':
     app.run(debug=True)
 

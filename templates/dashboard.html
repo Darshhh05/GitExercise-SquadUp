@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Member 3 - Activity Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Sports Activity Dashboard</h1>
+
+        <div class="stats-grid">
+            <div class="card">
+                <h3>Total Minutes</h3>
+                <p class="stat-val">{{ total }}</p>
+            </div>
+            <div class="card">
+                <h3>Total Sessions</h3>
+                <p class="stat-val">{{ count }}</p>
+            </div>
+        </div>
+
+        <div class="badge-section">
+            <h3>Achievements Unlocked</h3>
+            <div class="badge-container">
+                {% for badge in badges %}
+                    <span class="badge">🏆 {{ badge }}</span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="log-box">
+            <h3>Track New Activity</h3>
+            <form action="/add_activity" method="POST">
+                <input type="text" name="activity_name" placeholder="E.g. Basketball Training" required>
+                <input type="number" name="duration" placeholder="Minutes" required>
+                <button type="submit">Log Session</button>
+            </form>
+        </div>
+
+        <div class="history">
+            <h3>Recent Participation</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Activity</th>
+                        <th>Duration</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for act in activities %}
+                    <tr>
+                        <td>{{ act.timestamp.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ act.name }}</td>
+                        <td>{{ act.duration }} mins</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>    
