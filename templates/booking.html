@@ -70,6 +70,29 @@
         <button type="submit">Create Event🏀🏈⚽➴🎾</button>
     </form>
 
+    <hr>
+    <h2>Available Events</h2>
+
+{% for event in events %}
+    <p>
+        ID: {{ event.id }} <br>
+        Name: {{ event.name }} <br>
+        Facility: {{ event.facility }} <br>
+        Date: {{ event.date }} <br>
+        Time: {{ event.start_time }} - {{ event.end_time }}
+    </p>
+    <hr>
+{% endfor %}
+<h2>Join Event 🤝</h2>
+
+<form method="POST" action="/join_event">
+
+    <label>Enter Event ID:</label><br>
+    <input type="number" name="event_id" required><br><br>
+
+    <button type="submit">Join Event</button>
+</form>
+
     <a href="{{ url_for('home') }}">Back to Home</a>
 
 
