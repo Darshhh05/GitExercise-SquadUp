@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard - SquadUp</title>
+</head>
+<body>
+
+    <h1>My Dashboard</h1>
+
+    <h2>My Profile</h2>
+
+    <img src="{{ url_for('static', filename='images/' + user.avatar) }}" width="120">
+
+    <p><strong>User ID:</strong> {{ user.id }}</p>
+    <p><strong>Username:</strong> {{ user.username }}</p>
+    <p><strong>Skill Level:</strong> {{ user.skill_level }}</p>
+
+    <hr>
+
+    <h2>Due Events / Upcoming Bookings</h2>
+
+    {% if due_bookings %}
+        <table border="1" cellpadding="10">
+            <tr>
+                <th>Booking ID</th>
+                <th>Facility</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Action</th>
+            </tr>
+
+            {% for booking in due_bookings %}
+            <tr>
+                <td>{{ booking.id }}</td>
+                <td>{{ booking.facility }}</td>
+                <td>{{ booking.date }}</td>
+                <td>{{ booking.time }}</td>
+                <td>
+                    <a href="{{ url_for('delete_booking', booking_id=booking.id) }}">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No upcoming bookings yet.</p>
+    {% endif %}
+
+    <hr>
+
+    <h2>Past Events / Past Bookings</h2>
+
+    {% if past_bookings %}
+        <table border="1" cellpadding="10">
+            <tr>
+                <th>Booking ID</th>
+                <th>Facility</th>
+                <th>Date</th>
+                <th>Time</th>
+            </tr>
+
+            {% for booking in past_bookings %}
+            <tr>
+                <td>{{ booking.id }}</td>
+                <td>{{ booking.facility }}</td>
+                <td>{{ booking.date }}</td>
+              <td>{{ booking.start_time }} - {{ booking.end_time }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>No past bookings yet.</p>
+    {% endif %}
+
+    <br>
+
+    <a href="{{ url_for('booking') }}">Book Facility / Create Event</a> |
+    <a href="{{ url_for('logout') }}">Logout</a>
+
+</body>
+</html>

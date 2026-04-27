@@ -32,11 +32,71 @@
         <button type="submit">Book Now</button>
     </form>
 
+
+
     <br>
+
+    <hr>
+    <h2> Create Event🏀🏈⚽➴🎾</h2>
+
+    <form method="POST" action="/create_event">
+
+        <label>Event Name:</label><br>
+        <input type="text" name="event_name"  required><br><br>
+
+        <label>Facility:</label><br>
+        <select name="facility_id">
+            <option value="1">Badminton Court🏸</option>
+            <option value="2">Basketball Court🏀</option>
+            <option value="3">Swimming Pool🏊</option>
+            <option value="4">Football Field⚽</option>
+        </select><br><br>
+
+        <label>Date:</label><br>
+        <input type="date" name="date"><br><br>
+        
+        <label>Start Time:</label><br>
+        <input type="time" name="start_time"><br><br>
+
+        <label>End Time:</label><br>
+        <input type="time" name="end_time"><br><br>
+
+        <label>Level:</label><br>
+        <select name="level">
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+        </select><br><br>
+
+        <button type="submit">Create Event🏀🏈⚽➴🎾</button>
+    </form>
+
+    <hr>
+    <h2>Available Events</h2>
+
+{% for event in events %}
+    <p>
+        ID: {{ event.id }} <br>
+        Name: {{ event.name }} <br>
+        Facility: {{ event.facility }} <br>
+        Date: {{ event.date }} <br>
+        Time: {{ event.start_time }} - {{ event.end_time }}
+    </p>
+    <hr>
+{% endfor %}
+<h2>Join Event 🤝</h2>
+
+<form method="POST" action="/join_event">
+
+    <label>Enter Event ID:</label><br>
+    <input type="number" name="event_id" required><br><br>
+
+    <button type="submit">Join Event</button>
+</form>
+
     <a href="{{ url_for('home') }}">Back to Home</a>
 
-</body> 
-=======
+
+
 </body>
 
 </html>

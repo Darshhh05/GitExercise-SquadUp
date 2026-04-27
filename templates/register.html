@@ -17,6 +17,49 @@
         <label for="password">Password:</label><br>
         <input type="password" id="password" name="password" required><br><br>
 
+        <label for="skill_level">Skill Level:</label><br>
+        <select id="skill_level" name="skill_level" required>
+            <option value="">Select Skill Level</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+        </select><br><br>
+
+        <label>Choose Avatar:</label><br><br>
+
+        <input type="radio" name="avatar" value="avatar_1.png" required>
+        <img src="{{ url_for('static', filename='images/avatar_1.png') }}" width="80">
+
+        <input type="radio" name="avatar" value="avatar_2.png">
+        <img src="{{ url_for('static', filename='images/avatar_2.png') }}" width="80">
+
+        <input type="radio" name="avatar" value="avatar_3.png">
+        <img src="{{ url_for('static', filename='images/avatar_3.png') }}" width="80">
+
+        <input type="radio" name="avatar" value="avatar_4.png">
+        <img src="{{ url_for('static', filename='images/avatar_4.png') }}" width="80">
+
+        <br><br>
+
+        <input type="radio" name="avatar" value="avatar_5.png">
+        <img src="{{ url_for('static', filename='images/avatar_5.png') }}" width="80">
+
+        <input type="radio" name="avatar" value="avatar_7.png">
+        <img src="{{ url_for('static', filename='images/avatar_7.png') }}" width="80">
+
+        <input type="radio" name="avatar" value="avatar_12.png">
+        <img src="{{ url_for('static', filename='images/avatar_12.png') }}" width="80">
+
+        <input type="radio" name="avatar" value="avatar_14.png">
+        <img src="{{ url_for('static', filename='images/avatar_14.png') }}" width="80">
+
+        <br><br>
+
+        <input type="radio" name="avatar" value="avatar_16.png">
+        <img src="{{ url_for('static', filename='images/avatar_16.png') }}" width="80">
+
+        <br><br>
+
         <button type="submit">Register</button>
 
     </form>
