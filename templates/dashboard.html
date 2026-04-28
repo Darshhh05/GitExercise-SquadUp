@@ -12,6 +12,7 @@
     <img src="{{ url_for('static', filename='images/' + user.avatar) }}" width="120">
 
     <p><strong>User ID:</strong> {{ user.id }}</p>
+    <p><strong>Full Name:</strong> {{ user.full_name }}</p>
     <p><strong>Username:</strong> {{ user.username }}</p>
     <p><strong>Skill Level:</strong> {{ user.skill_level }}</p>
 
@@ -34,7 +35,7 @@
                 <td>{{ booking.id }}</td>
                 <td>{{ booking.facility }}</td>
                 <td>{{ booking.date }}</td>
-                <td>{{ booking.time }}</td>
+                <td>{{ booking.start_time }} - {{ booking.end_time }}</td>
                 <td>
                     <a href="{{ url_for('delete_booking', booking_id=booking.id) }}">Delete</a>
                 </td>

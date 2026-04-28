@@ -22,6 +22,7 @@ def home():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'POST':
+        full_name = request.form['full_name']
         username = request.form['username']
         password = request.form['password']
         skill_level = request.form['skill_level']
@@ -39,8 +40,8 @@ def register():
             return "Username already exists"
 
         conn.execute(
-            "INSERT INTO users (username, password, skill_level, avatar) VALUES (?, ?, ?, ?)",
-            (username, password, skill_level, avatar)
+            "INSERT INTO users (full_name, username, password, skill_level, avatar) VALUES (?, ?, ?, ?, ?)",
+            (full_name, username, password, skill_level, avatar)
         )
 
         conn.commit()

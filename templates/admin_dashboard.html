@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard - SquadUp</title>
+</head>
+<body>
+
+    <h1>Admin Dashboard</h1>
+
+    <a href="{{ url_for('admin_logout') }}">Admin Logout</a>
+
+    <hr>
+
+    <h2>Manage Facilities</h2>
+
+    <form method="POST" action="{{ url_for('add_facility') }}">
+        <input type="text" name="facility_name" placeholder="Enter facility name" required>
+        <button type="submit">Add Facility</button>
+    </form>
+
+    <br>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>Facility ID</th>
+            <th>Facility Name</th>
+            <th>Action</th>
+        </tr>
+
+        {% for facility in facilities %}
+        <tr>
+            <td>{{ facility.id }}</td>
+            <td>{{ facility.name }}</td>
+            <td>
+                <a href="{{ url_for('delete_facility', facility_id=facility.id) }}">Remove</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <hr>
+
+    <h2>Post Announcement</h2>
+
+    <form method="POST" action="{{ url_for('post_announcement') }}">
+        <textarea name="message" rows="4" cols="50" placeholder="Write announcement here" required></textarea><br><br>
+        <button type="submit">Post Announcement</button>
+    </form>
+
+    <h3>Current Announcements</h3>
+
+    {% for announcement in announcements %}
+        <p>
+            {{ announcement.message }}
+            <a href="{{ url_for('delete_announcement', announcement_id=announcement.id) }}">Delete</a>
+        </p>
+    {% endfor %}
+
+    <hr>
+
+    <h2>Registered Users</h2>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>User ID</th>
+            <th>Username</th>
+            <th>Skill Level</th>
+            <th>Avatar</th>
+        </tr>
+
+        {% for user in users %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.username }}</td>
+            <td>{{ user.skill_level }}</td>
+            <td>
+                <img src="{{ url_for('static', filename='images/' + user.avatar) }}" width="60">
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <hr>
+
+    <h2>All Facility Bookings</h2>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>Booking ID</th>
+            <th>Username</th>
+            <th>Facility</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+
+        {% for booking in bookings %}
+        <tr>
+            <td>{{ booking.id }}</td>
+            <td>{{ booking.username }}</td>
+            <td>{{ booking.facility }}</td>
+            <td>{{ booking.date }}</td>
+            <td>{{ booking.start_time }} - {{ booking.end_time }}</td>
+            <td>{{ booking.status }}</td>
+            <td>
+                <a href="{{ url_for('approve_booking', booking_id=booking.id) }}">Approve</a> |
+                <a href="{{ url_for('reject_booking', booking_id=booking.id) }}">Reject</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <hr>
+
+    <h2>All Created Events</h2>
+
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>Event ID</th>
+            <th>Event Name</th>
+            <th>Created By</th>
+            <th>Facility</th>
+            <th>Date</th>
+            <th>Time</th>
+            <th>Level</th>
+            <th>Status</th>
+            <th>Action</th>
+        </tr>
+
+        {% for event in events %}
+        <tr>
+            <td>{{ event.id }}</td>
+            <td>{{ event.name }}</td>
+            <td>{{ event.created_by }}</td>
+            <td>{{ event.facility }}</td>
+            <td>{{ event.date }}</td>
+            <td>{{ event.start_time }} - {{ event.end_time }}</td>
+            <td>{{ event.level }}</td>
+            <td>{{ event.status }}</td>
+            <td>
+                <a href="{{ url_for('approve_event', event_id=event.id) }}">Approve</a> |
+                <a href="{{ url_for('reject_event', event_id=event.id) }}">Reject</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+</html>
