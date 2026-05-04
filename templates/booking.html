@@ -6,97 +6,117 @@
     <title>Book Facility - SquadUp</title>
 </head>
 <body>
-    <h1>Book a Sports Facility</h1>
 
-    <form method="POST" action="/book">
-        <label for="facility">Choose Facility</label><br>
-        <select id="facility" name="facility">
-            <option value="Badminton Court">Badminton Court</option>
-            <option value="Basketball Court">Basketball Court</option>
-            <option value="Swimming Pool">Swimming Pool</option>
-            <option value="Football Field">Football Field</option>
-        </select>
-        <br><br>
+<h1>Book a Sports Facility</h1>
 
-        <label for="date">Select Date</label><br>
-        <input type="date" id="date" name="date">
-        <br><br>
+<form method="POST" action="/book">
+    
+    <label>Choose Facility</label><br>
+    <select name="facility">
+        <option>Badminton Court</option>
+        <option>Basketball Court</option>
+        <option>Swimming Pool</option>
+        <option>Football Field</option>
+    </select>
+    <br><br>
 
-        <label>Start Time:</label><br>
-        <input type="time" name="start_time"required><br><br>
-        
+    <label>Select Date</label><br>
+    <input type="date" id="date" name="date" required>
+    <br><br>
 
-        <label>End Time:</label><br>
-        <input type="time" name="end_time"required><br><br>
+    <label>Start Time:</label><br>
+    <input type="time" name="start_time" required><br><br>
 
-        <button type="submit">Book Now</button>
-    </form>
+    <label>End Time:</label><br>
+    <input type="time" name="end_time" required><br><br>
 
-
-
-    <br>
-
-    <hr>
-    <h2> Create Event🏀🏈⚽➴🎾</h2>
-
-    <form method="POST" action="/create_event">
-
-        <label>Event Name:</label><br>
-        <input type="text" name="event_name"  required><br><br>
-
-        <label>Facility:</label><br>
-        <select name="facility_id">
-            <option value="1">Badminton Court🏸</option>
-            <option value="2">Basketball Court🏀</option>
-            <option value="3">Swimming Pool🏊</option>
-            <option value="4">Football Field⚽</option>
-        </select><br><br>
-
-        <label>Date:</label><br>
-        <input type="date" name="date"><br><br>
-        
-        <label>Start Time:</label><br>
-        <input type="time" name="start_time"><br><br>
-
-        <label>End Time:</label><br>
-        <input type="time" name="end_time"><br><br>
-
-        <label>Level:</label><br>
-        <select name="level">
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-        </select><br><br>
-
-        <button type="submit">Create Event🏀🏈⚽➴🎾</button>
-    </form>
-
-    <hr>
-    <h2>Available Events</h2>
-
-{% for event in events %}
-    <p>
-        ID: {{ event.id }} <br>
-        Name: {{ event.name }} <br>
-        Facility: {{ event.facility }} <br>
-        Date: {{ event.date }} <br>
-        Time: {{ event.start_time }} - {{ event.end_time }}
-    </p>
-    <hr>
-{% endfor %}
-<h2>Join Event 🤝</h2>
-
-<form method="POST" action="/join_event">
-
-    <label>Enter Event ID:</label><br>
-    <input type="number" name="event_id" required><br><br>
-
-    <button type="submit">Join Event</button>
+    <button type="submit">Book Now</button>
 </form>
 
-    <a href="{{ url_for('home') }}">Back to Home</a>
+<hr>
 
+<h2>Create Event 🏀🏈⚽➴🎾</h2>
 
+<form method="POST" action="/create_event">
+
+    <label>Event Name:</label><br>
+    <input type="text" name="event_name" required><br><br>
+
+    <!-- ✅ OPTIONAL: you can REMOVE this since backend auto uses session -->
+    <!-- keeping it won't break anything -->
+    <label>Your Name (Organizer):</label><br>
+    <input type="text" name="organizer" required><br><br>
+
+    <label>Facility:</label><br>
+    <select name="facility">
+        <option>Badminton Court🏸</option>
+        <option>Basketball Court🏀</option>
+        <option>Swimming Pool🏊</option>
+        <option>Football Field⚽</option>
+    </select><br><br>
+
+    <label>Date:</label><br>
+    <input type="date" id="event_date" name="date" required><br><br>
+
+    <label>Start Time:</label><br>
+    <input type="time" name="start_time" required><br><br>
+
+    <label>End Time:</label><br>
+    <input type="time" name="end_time" required><br><br>
+
+    <label>Level:</label><br>
+    <select name="level">
+        <option>Beginner</option>
+        <option>Intermediate</option>
+    </select><br><br>
+
+    <button type="submit">Create Event</button>
+</form>
+
+<hr>
+
+<h2>Available Events</h2>
+
+{% for event in events %}
+<div style="border:1px solid black; padding:10px; margin-bottom:10px;">
+
+    <b>Event:</b> {{ event.name }} <br>
+    <b>Organizer:</b> {{ event.organizer }} <br>
+    <b>Facility:</b> {{ event.facility }} <br>
+    <b>Date:</b> {{ event.date }} <br>
+    <b>Time:</b> {{ event.start_time }} - {{ event.end_time }} <br>
+
+    <!-- ❌ REMOVE this (you don't have members logic yet) -->
+    <!--
+    <b>Members Joined:</b>
+    <ul>
+        {% for member in event.members %}
+            <li>{{ member }}</li>
+        {% else %}
+            <li>No members yet</li>
+        {% endfor %}
+    </ul>
+    -->
+
+    <!-- ✅ FIXED JOIN FORM -->
+    <form method="POST" action="/join_event">
+        <input type="hidden" name="event_id" value="{{ event.id }}">
+
+        <button type="submit">Join Event</button>
+    </form>
+
+</div>
+{% endfor %}
+
+<br>
+<a href="{{ url_for('home') }}">Back to Home</a>
+
+<!-- BLOCK PAST DATES -->
+<script>
+    let today = new Date().toISOString().split("T")[0];
+    document.getElementById("date").setAttribute("min", today);
+    document.getElementById("event_date").setAttribute("min", today);
+</script>
 
 </body>
-
 </html>

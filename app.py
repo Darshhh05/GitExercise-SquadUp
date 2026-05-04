@@ -15,7 +15,26 @@ def get_db_connection():
     return conn
 
 
+
 @app.route("/")
+=======
+# ✅ AUTO FIX DATABASE (adds organizer column if missing)
+def fix_database():
+    conn = sqlite3.connect("database.db")
+
+    columns = conn.execute("PRAGMA table_info(events)").fetchall()
+    column_names = [col[1] for col in columns]
+
+    if "organizer" not in column_names:
+        conn.execute("ALTER TABLE events ADD COLUMN organizer TEXT")
+        print("✅ Added 'organizer' column")
+
+    conn.commit()
+    conn.close()
+
+
+@app.route('/')
+>>>>>>> e1b1a8a (Tanushiya updated app.py,booking.html)
 def home():
     if "username" in session:
         return redirect(url_for("dashboard"))
@@ -30,6 +49,13 @@ def register():
         password = request.form["password"]
         skill_level = request.form["skill_level"]
         avatar = request.form["avatar"]
+
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+        skill_level = request.form.get('skill_level')
+        avatar = request.form.get('avatar')
+
 
         conn = get_db_connection()
 
@@ -61,9 +87,15 @@ def register():
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
+
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
+=======
+    if request.method == 'POST':
+        username = request.form.get('username')
+        password = request.form.get('password')
+
 
         conn = get_db_connection()
 
@@ -156,10 +188,32 @@ def booking():
 
     conn.close()
 
+<<<<<<< HEAD
     return render_template(
         "booking.html",
         facilities=facilities,
         events=events
+=======
+    return render_template('booking.html', events=events)
+
+
+@app.route('/book', methods=['POST'])
+def book():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    username = session['username']
+    facility = request.form.get('facility')
+    date_selected = request.form.get('date')
+    start_time = request.form.get('start_time')
+    end_time = request.form.get('end_time')
+
+    conn = get_db_connection()
+
+    conn.execute(
+        "INSERT INTO bookings (username, facility, date, start_time, end_time) VALUES (?, ?, ?, ?, ?)",
+        (username, facility, date_selected, start_time, end_time)
+
     )
 
 
@@ -168,20 +222,55 @@ def book():
     if "username" not in session:
         return redirect(url_for("login"))
 
+<<<<<<< HEAD
     username = session["username"]
     facility = request.form["facility"]
     date_selected = request.form["date"]
     start_time = request.form["start_time"]
     end_time = request.form["end_time"]
+=======
+
+@app.route('/create_event', methods=['POST'])
+def create_event():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    event_name = request.form.get('event_name')
+    facility = request.form.get('facility')
+    date_selected = request.form.get('date')
+    start_time = request.form.get('start_time')
+    end_time = request.form.get('end_time')
+    level = request.form.get('level')
+
+    # ✅ auto set organizer as logged-in user
+    organizer = session['username']
+
 
     conn = get_db_connection()
 
     conn.execute(
         """
+
         INSERT INTO bookings (username, facility, date, start_time, end_time, status)
         VALUES (?, ?, ?, ?, ?, ?)
         """,
         (username, facility, date_selected, start_time, end_time, "Pending")
+
+        INSERT INTO events 
+        (name, organizer, facility, date, start_time, end_time, level, created_by) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        """,
+        (
+            event_name,
+            organizer,
+            facility,
+            date_selected,
+            start_time,
+            end_time,
+            level,
+            session['username']
+        )
+
     )
 
     conn.commit()
@@ -233,7 +322,11 @@ def join_event():
     if "username" not in session:
         return redirect(url_for("login"))
 
+
     event_id = request.form["event_id"]
+
+    event_id = request.form.get('event_id')
+
 
     conn = get_db_connection()
 
@@ -309,6 +402,7 @@ def admin_login():
         return "Invalid admin username or password"
 
     return render_template("admin_login.html")
+
 
 
 @app.route("/admin_dashboard")
@@ -509,4 +603,8 @@ def reject_event(event_id):
 
 
 if __name__ == "__main__":
+=======
+if __name__ == '__main__':
+    fix_database()  # ✅ auto fix database
+>>>>>>> e1b1a8a (Tanushiya updated app.py,booking.html)
     app.run(debug=True)
