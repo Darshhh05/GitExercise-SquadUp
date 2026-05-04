@@ -1,70 +1,48 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Book Facility - SquadUp</title>
+    <title>Booking</title>
 </head>
 <body>
 
-<h1>Book a Sports Facility</h1>
+<h1>Book Facility</h1>
 
-<form method="POST" action="/book">
-    
-    <label>Choose Facility</label><br>
+<form method="POST" action="{{ url_for('book') }}">
+    Facility:
     <select name="facility">
         <option>Badminton Court</option>
         <option>Basketball Court</option>
         <option>Swimming Pool</option>
         <option>Football Field</option>
-    </select>
-    <br><br>
+    </select><br><br>
 
-    <label>Select Date</label><br>
-    <input type="date" id="date" name="date" required>
-    <br><br>
+    Date: <input type="date" name="date"><br><br>
+    Start: <input type="time" name="start_time"><br><br>
+    End: <input type="time" name="end_time"><br><br>
 
-    <label>Start Time:</label><br>
-    <input type="time" name="start_time" required><br><br>
-
-    <label>End Time:</label><br>
-    <input type="time" name="end_time" required><br><br>
-
-    <button type="submit">Book Now</button>
+    <button type="submit">Book</button>
 </form>
 
 <hr>
 
-<h2>Create Event 🏀🏈⚽➴🎾</h2>
+<h2>Create Event</h2>
 
-<form method="POST" action="/create_event">
+<form method="POST" action="{{ url_for('create_event') }}">
+    Name: <input type="text" name="event_name"><br><br>
 
-    <label>Event Name:</label><br>
-    <input type="text" name="event_name" required><br><br>
-
-    <!-- ✅ OPTIONAL: you can REMOVE this since backend auto uses session -->
-    <!-- keeping it won't break anything -->
-    <label>Your Name (Organizer):</label><br>
-    <input type="text" name="organizer" required><br><br>
-
-    <label>Facility:</label><br>
+    Facility:
     <select name="facility">
-        <option>Badminton Court🏸</option>
-        <option>Basketball Court🏀</option>
-        <option>Swimming Pool🏊</option>
-        <option>Football Field⚽</option>
+        <option>Badminton Court</option>
+        <option>Basketball Court</option>
+        <option>Swimming Pool</option>
+        <option>Football Field</option>
     </select><br><br>
 
-    <label>Date:</label><br>
-    <input type="date" id="event_date" name="date" required><br><br>
+    Date: <input type="date" name="date"><br><br>
+    Start: <input type="time" name="start_time"><br><br>
+    End: <input type="time" name="end_time"><br><br>
 
-    <label>Start Time:</label><br>
-    <input type="time" name="start_time" required><br><br>
-
-    <label>End Time:</label><br>
-    <input type="time" name="end_time" required><br><br>
-
-    <label>Level:</label><br>
+    Level:
     <select name="level">
         <option>Beginner</option>
         <option>Intermediate</option>
@@ -75,48 +53,31 @@
 
 <hr>
 
-<h2>Available Events</h2>
+<h2>Events</h2>
 
 {% for event in events %}
 <div style="border:1px solid black; padding:10px; margin-bottom:10px;">
+    <b>{{ event.name }}</b><br>
+    Organizer: {{ event.organizer }}<br>
 
-    <b>Event:</b> {{ event.name }} <br>
-    <b>Organizer:</b> {{ event.organizer }} <br>
-    <b>Facility:</b> {{ event.facility }} <br>
-    <b>Date:</b> {{ event.date }} <br>
-    <b>Time:</b> {{ event.start_time }} - {{ event.end_time }} <br>
-
-    <!-- ❌ REMOVE this (you don't have members logic yet) -->
-    <!--
-    <b>Members Joined:</b>
+    Members:
     <ul>
-        {% for member in event.members %}
-            <li>{{ member }}</li>
+        {% for m in event.members %}
+            <li>{{ m }}</li>
         {% else %}
             <li>No members yet</li>
         {% endfor %}
     </ul>
-    -->
 
-    <!-- ✅ FIXED JOIN FORM -->
-    <form method="POST" action="/join_event">
+    <form method="POST" action="{{ url_for('join_event') }}">
         <input type="hidden" name="event_id" value="{{ event.id }}">
-
-        <button type="submit">Join Event</button>
+        <button type="submit">Join</button>
     </form>
-
 </div>
 {% endfor %}
 
 <br>
-<a href="{{ url_for('home') }}">Back to Home</a>
-
-<!-- BLOCK PAST DATES -->
-<script>
-    let today = new Date().toISOString().split("T")[0];
-    document.getElementById("date").setAttribute("min", today);
-    document.getElementById("event_date").setAttribute("min", today);
-</script>
+<a href="{{ url_for('home') }}">Home</a>
 
 </body>
 </html>

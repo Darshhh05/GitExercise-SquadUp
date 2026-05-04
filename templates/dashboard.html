@@ -5,77 +5,79 @@
 </head>
 <body>
 
-    <h1>My Dashboard</h1>
+<h1>My Dashboard</h1>
 
-    <h2>My Profile</h2>
+<h2>My Profile</h2>
 
+<!-- 🔥 AVATAR -->
+{% if user.avatar %}
     <img src="{{ url_for('static', filename='images/' + user.avatar) }}" width="120">
+{% else %}
+    <p>No avatar</p>
+{% endif %}
 
-    <p><strong>User ID:</strong> {{ user.id }}</p>
-    <p><strong>Full Name:</strong> {{ user.full_name }}</p>
-    <p><strong>Username:</strong> {{ user.username }}</p>
-    <p><strong>Skill Level:</strong> {{ user.skill_level }}</p>
+<p><strong>Username:</strong> {{ username }}</p>
 
-    <hr>
+<hr>
 
-    <h2>Due Events / Upcoming Bookings</h2>
+<h2>Upcoming Bookings</h2>
 
-    {% if due_bookings %}
-        <table border="1" cellpadding="10">
-            <tr>
-                <th>Booking ID</th>
-                <th>Facility</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Action</th>
-            </tr>
+{% if due_bookings %}
+<table border="1" cellpadding="10">
+    <tr>
+        <th>ID</th>
+        <th>Facility</th>
+        <th>Date</th>
+        <th>Time</th>
+        <th>Action</th>
+    </tr>
 
-            {% for booking in due_bookings %}
-            <tr>
-                <td>{{ booking.id }}</td>
-                <td>{{ booking.facility }}</td>
-                <td>{{ booking.date }}</td>
-                <td>{{ booking.start_time }} - {{ booking.end_time }}</td>
-                <td>
-                    <a href="{{ url_for('delete_booking', booking_id=booking.id) }}">Delete</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p>No upcoming bookings yet.</p>
-    {% endif %}
+    {% for booking in due_bookings %}
+    <tr>
+        <td>{{ booking.id }}</td>
+        <td>{{ booking.facility }}</td>
+        <td>{{ booking.date }}</td>
+        <td>{{ booking.start_time }} - {{ booking.end_time }}</td>
+        <td>
+            <a href="{{ url_for('delete_booking', booking_id=booking.id) }}">Delete</a>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No upcoming bookings yet.</p>
+{% endif %}
 
-    <hr>
+<hr>
 
-    <h2>Past Events / Past Bookings</h2>
+<h2>Past Bookings</h2>
 
-    {% if past_bookings %}
-        <table border="1" cellpadding="10">
-            <tr>
-                <th>Booking ID</th>
-                <th>Facility</th>
-                <th>Date</th>
-                <th>Time</th>
-            </tr>
+{% if past_bookings %}
+<table border="1" cellpadding="10">
+    <tr>
+        <th>ID</th>
+        <th>Facility</th>
+        <th>Date</th>
+        <th>Time</th>
+    </tr>
 
-            {% for booking in past_bookings %}
-            <tr>
-                <td>{{ booking.id }}</td>
-                <td>{{ booking.facility }}</td>
-                <td>{{ booking.date }}</td>
-              <td>{{ booking.start_time }} - {{ booking.end_time }}</td>
-            </tr>
-            {% endfor %}
-        </table>
-    {% else %}
-        <p>No past bookings yet.</p>
-    {% endif %}
+    {% for booking in past_bookings %}
+    <tr>
+        <td>{{ booking.id }}</td>
+        <td>{{ booking.facility }}</td>
+        <td>{{ booking.date }}</td>
+        <td>{{ booking.start_time }} - {{ booking.end_time }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<p>No past bookings yet.</p>
+{% endif %}
 
-    <br>
+<br>
 
-    <a href="{{ url_for('booking') }}">Book Facility / Create Event</a> |
-    <a href="{{ url_for('logout') }}">Logout</a>
+<a href="{{ url_for('booking') }}">Book / Events</a> |
+<a href="{{ url_for('logout') }}">Logout</a>
 
 </body>
 </html>
