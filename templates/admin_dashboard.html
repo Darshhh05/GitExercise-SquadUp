@@ -63,6 +63,7 @@
     <table border="1" cellpadding="10">
         <tr>
             <th>User ID</th>
+            <th>Full Name</th>
             <th>Username</th>
             <th>Skill Level</th>
             <th>Avatar</th>
@@ -71,9 +72,10 @@
         {% for user in users %}
         <tr>
             <td>{{ user.id }}</td>
+            <td>{{ user.full_name }}</td>
             <td>{{ user.username }}</td>
             <td>{{ user.skill_level }}</td>
-            <td>
+         <td>
                 <img src="{{ url_for('static', filename='images/' + user.avatar) }}" width="60">
             </td>
         </tr>

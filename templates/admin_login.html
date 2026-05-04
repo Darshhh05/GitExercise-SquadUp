@@ -1,25 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Admin Login - SquadUp</title>
+    <meta charset="UTF-8">
+    <title>Admin Access - SquadUp</title>
 </head>
 <body>
 
-    <h1>Admin Login</h1>
+    <h1>Admin Access</h1>
 
     <form method="POST" action="{{ url_for('admin_login') }}">
         <label>Username:</label><br>
-        <input type="text" name="username" required><br><br>
+        <input type="text" name="username" placeholder="Enter username" required><br><br>
 
         <label>Password:</label><br>
-        <input type="password" name="password" required><br><br>
+        <input type="password" name="password" placeholder="Enter password" required><br><br>
 
-        <button type="submit">Login as Admin</button>
+        <button type="submit">Login</button>
     </form>
 
     <br>
 
-    <a href="{{ url_for('home') }}">Back to Home</a>
+    <a href="{{ url_for('home') }}">Back</a>
 
 </body>
 </html>

@@ -3,6 +3,7 @@ import sqlite3
 conn = sqlite3.connect("database.db")
 cursor = conn.cursor()
 
+
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -14,12 +15,14 @@ CREATE TABLE IF NOT EXISTS users (
 )
 """)
 
+# ---------------- FACILITIES TABLE ----------------
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS facilities (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL UNIQUE
 )
 """)
+
 
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS bookings (
@@ -32,6 +35,7 @@ CREATE TABLE IF NOT EXISTS bookings (
     status TEXT DEFAULT 'Pending'
 )
 """)
+
 
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS events (
@@ -47,6 +51,7 @@ CREATE TABLE IF NOT EXISTS events (
 )
 """)
 
+
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS joined_events (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,12 +60,14 @@ CREATE TABLE IF NOT EXISTS joined_events (
 )
 """)
 
+
 cursor.execute("""
 CREATE TABLE IF NOT EXISTS announcements (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     message TEXT NOT NULL
 )
 """)
+
 
 default_facilities = [
     "Badminton Court",
@@ -74,6 +81,7 @@ for facility in default_facilities:
         "INSERT OR IGNORE INTO facilities (name) VALUES (?)",
         (facility,)
     )
+
 
 conn.commit()
 conn.close()
