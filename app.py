@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
-from datetime import date
+from datetime import date, datetime
 
 app = Flask(__name__)
 app.secret_key = "squadup_secret_key"
@@ -81,7 +81,7 @@ def register():
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
-        avatar = request.form["avatar"]  # 👈 IMPORTANT
+        avatar = request.form["avatar"]
 
         conn = get_db_connection()
 
@@ -143,7 +143,6 @@ def dashboard():
 
     conn = get_db_connection()
 
-    # GET USER (FOR AVATAR)
     user = conn.execute(
         "SELECT * FROM users WHERE username = ?",
         (username,)
@@ -190,6 +189,8 @@ def booking():
     if "username" not in session:
         return redirect(url_for("login"))
 
+    today = datetime.today().strftime("%Y-%m-%d")
+
     conn = get_db_connection()
 
     events = conn.execute("SELECT * FROM events").fetchall()
@@ -215,7 +216,11 @@ def booking():
 
     conn.close()
 
-    return render_template("booking.html", events=events_with_members)
+    return render_template(
+        "booking.html",
+        events=events_with_members,
+        today=today
+    )
 
 
 # ---------- BOOK ----------
@@ -229,6 +234,11 @@ def book():
     date_selected = request.form["date"]
     start_time = request.form["start_time"]
     end_time = request.form["end_time"]
+
+    today = datetime.today().strftime("%Y-%m-%d")
+
+    if date_selected < today:
+        return "Cannot book past dates"
 
     conn = get_db_connection()
 
@@ -258,6 +268,11 @@ def create_event():
     end_time = request.form["end_time"]
     level = request.form["level"]
 
+    today = datetime.today().strftime("%Y-%m-%d")
+
+    if date_selected < today:
+        return "Cannot create event in past dates"
+
     conn = get_db_connection()
 
     conn.execute("""
@@ -267,7 +282,7 @@ def create_event():
     """, (
         event_name,
         organizer,
-        organizer,  # 👈 FIX
+        organizer,
         facility,
         date_selected,
         start_time,
@@ -304,6 +319,28 @@ def join_event():
         )
         conn.commit()
 
+    conn.close()
+
+    return redirect(url_for("booking"))
+
+
+# ---------- UNJOIN EVENT ----------
+@app.route("/unjoin_event", methods=["POST"])
+def unjoin_event():
+    if "username" not in session:
+        return redirect(url_for("login"))
+
+    event_id = request.form["event_id"]
+    username = session["username"]
+
+    conn = get_db_connection()
+
+    conn.execute(
+        "DELETE FROM joined_events WHERE username = ? AND event_id = ?",
+        (username, event_id)
+    )
+
+    conn.commit()
     conn.close()
 
     return redirect(url_for("booking"))
