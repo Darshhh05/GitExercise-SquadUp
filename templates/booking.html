@@ -87,46 +87,46 @@
 
 <hr>
 
-<h2>Events</h2>
+<h2>Approved Events</h2>
 
 {% if events %}
     {% for event in events %}
 
-    <div style="border:1px solid black; padding:10px; margin-bottom:10px;">
+        <div>
 
-        <b>{{ event.name }}</b><br>
+            <h3>{{ event.name }}</h3>
 
-        Organizer: {{ event.organizer }}<br>
-        Facility: {{ event.facility }}<br>
-        Date: {{ event.date }}<br>
-        Time: {{ event.start_time }} - {{ event.end_time }}<br>
-        Level: {{ event.level }}<br>
+            <p><strong>Organizer:</strong> {{ event.organizer }}</p>
+            <p><strong>Facility:</strong> {{ event.facility }}</p>
+            <p><strong>Date:</strong> {{ event.date }}</p>
+            <p><strong>Time:</strong> {{ event.start_time }} - {{ event.end_time }}</p>
+            <p><strong>Level:</strong> {{ event.level }}</p>
 
-        <br>
+            <p><strong>Members:</strong></p>
 
-        Members:
+            <ul>
+                {% for m in event.members %}
+                    <li>{{ m }}</li>
+                {% else %}
+                    <li>No members yet</li>
+                {% endfor %}
+            </ul>
 
-        <ul>
-            {% for m in event.members %}
-                <li>{{ m }}</li>
-            {% else %}
-                <li>No members yet</li>
-            {% endfor %}
-        </ul>
+            <form method="POST" action="{{ url_for('join_event') }}">
+                <input type="hidden" name="event_id" value="{{ event.id }}">
+                <button type="submit">Join</button>
+            </form>
 
-        <form method="POST" action="{{ url_for('join_event') }}">
-            <input type="hidden" name="event_id" value="{{ event.id }}">
-            <button type="submit">Join</button>
-        </form>
+            <br>
 
-        <br>
+            <form method="POST" action="{{ url_for('unjoin_event') }}">
+                <input type="hidden" name="event_id" value="{{ event.id }}">
+                <button type="submit">Unjoin</button>
+            </form>
 
-        <form method="POST" action="{{ url_for('unjoin_event') }}">
-            <input type="hidden" name="event_id" value="{{ event.id }}">
-            <button type="submit">Unjoin</button>
-        </form>
+        </div>
 
-    </div>
+        <hr>
 
     {% endfor %}
 {% else %}

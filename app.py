@@ -1,9 +1,16 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+from flask_mail import Mail, Message
 import sqlite3
 from datetime import date
 
 app = Flask(__name__)
 app.secret_key = "squadup_secret_key"
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USERNAME"] = "youractualgmail@gmail.com"
+app.config["MAIL_PASSWORD"] = "abcd efgh ijkl mnop"
+mail = Mail(app)
 
 ADMIN_USERNAME = "admin"
 ADMIN_PASSWORD = "admin123"
@@ -19,15 +26,16 @@ def fix_database():
     conn = get_db_connection()
 
     conn.execute("""
-    CREATE TABLE IF NOT EXISTS users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        full_name TEXT,
-        username TEXT UNIQUE,
-        password TEXT,
-        skill_level TEXT,
-        avatar TEXT
-    )
-    """)
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    full_name TEXT,
+    username TEXT UNIQUE,
+    email TEXT,
+    password TEXT,
+    skill_level TEXT,
+    avatar TEXT
+)
+""")
 
     conn.execute("""
     CREATE TABLE IF NOT EXISTS facilities (
@@ -96,6 +104,7 @@ def register():
     if request.method == "POST":
         full_name = request.form.get("full_name")
         username = request.form["username"]
+        email = request.form["email"]
         password = request.form["password"]
         skill_level = request.form.get("skill_level")
         avatar = request.form["avatar"]
@@ -112,10 +121,10 @@ def register():
             return "Username already exists!"
 
         conn.execute("""
-            INSERT INTO users (full_name, username, password, skill_level, avatar)
-            VALUES (?, ?, ?, ?, ?)
-        """, (full_name, username, password, skill_level, avatar))
-
+    INSERT INTO users (full_name, username, email, password, skill_level, avatar)
+    VALUES (?, ?, ?, ?, ?, ?)
+    """, (full_name, username, email, password, skill_level, avatar)) 
+        
         conn.commit()
         conn.close()
 
@@ -489,12 +498,44 @@ def approve_booking(booking_id):
         return redirect(url_for("admin_login"))
 
     conn = get_db_connection()
-    conn.execute("UPDATE bookings SET status = 'Approved' WHERE id = ?", (booking_id,))
+
+    booking = conn.execute(
+        "SELECT * FROM bookings WHERE id = ?",
+        (booking_id,)
+    ).fetchone()
+
+    user = conn.execute(
+        "SELECT * FROM users WHERE username = ?",
+        (booking["username"],)
+    ).fetchone()
+
+    conn.execute(
+        "UPDATE bookings SET status = 'Approved' WHERE id = ?",
+        (booking_id,)
+    )
+
     conn.commit()
     conn.close()
 
-    return redirect(url_for("admin_dashboard"))
+    if user and user["email"]:
+        msg = Message(
+            "Booking Approved - SquadUp",
+            sender=app.config["MAIL_USERNAME"],
+            recipients=[user["email"]]
+        )
 
+        msg.body = f"""
+Hello {user['username']},
+
+Your booking for {booking['facility']} on {booking['date']}
+from {booking['start_time']} to {booking['end_time']} has been approved.
+
+Thank you for using SquadUp.
+"""
+
+        mail.send(msg)
+
+    return redirect(url_for("admin_dashboard"))
 
 @app.route("/reject_booking/<int:booking_id>")
 def reject_booking(booking_id):
@@ -502,11 +543,44 @@ def reject_booking(booking_id):
         return redirect(url_for("admin_login"))
 
     conn = get_db_connection()
-    conn.execute("UPDATE bookings SET status = 'Rejected' WHERE id = ?", (booking_id,))
+
+    booking = conn.execute(
+        "SELECT * FROM bookings WHERE id = ?",
+        (booking_id,)
+    ).fetchone()
+
+    user = conn.execute(
+        "SELECT * FROM users WHERE username = ?",
+        (booking["username"],)
+    ).fetchone()
+
+    conn.execute(
+        "UPDATE bookings SET status = 'Rejected' WHERE id = ?",
+        (booking_id,)
+    )
+
     conn.commit()
     conn.close()
 
-    return redirect(url_for("admin_dashboard"))
+    if user and user["email"]:
+        msg = Message(
+            "Booking Rejected - SquadUp",
+            sender=app.config["MAIL_USERNAME"],
+            recipients=[user["email"]]
+        )
+
+        msg.body = f"""
+Hello {user['username']},
+
+Your booking for {booking['facility']} on {booking['date']}
+from {booking['start_time']} to {booking['end_time']} has been rejected.
+
+Thank you for using SquadUp.
+"""
+
+        mail.send(msg)
+
+    return redirect(url_for("admin_dashboard")) 
 
 
 @app.route("/approve_event/<int:event_id>")
