@@ -175,6 +175,42 @@ def dashboard():
         "SELECT * FROM announcements ORDER BY id DESC"
     ).fetchall()
 
+    joined_events = conn.execute("""
+        SELECT events.*
+        FROM joined_events
+        JOIN events ON joined_events.event_id = events.id
+        WHERE joined_events.username = ?
+    """, (username,)).fetchall()
+
+    booking_count = conn.execute(
+        "SELECT COUNT(*) FROM bookings WHERE username = ?",
+        (username,)
+    ).fetchone()[0]
+
+    joined_count = conn.execute(
+        "SELECT COUNT(*) FROM joined_events WHERE username = ?",
+        (username,)
+    ).fetchone()[0]
+
+    created_count = conn.execute(
+        "SELECT COUNT(*) FROM events WHERE created_by = ?",
+        (username,)
+    ).fetchone()[0]
+
+    badges = []
+
+    if booking_count >= 3:
+        badges.append("Active Player")
+
+    if joined_count >= 3:
+        badges.append("Team Player")
+
+    if created_count >= 2:
+        badges.append("Team Organizer")
+
+    if booking_count >= 5 and joined_count >= 5:
+        badges.append("SquadUp Champion")
+
     conn.close()
 
     return render_template(
@@ -183,7 +219,12 @@ def dashboard():
         user=user,
         due_bookings=due_bookings,
         past_bookings=past_bookings,
-        announcements=announcements
+        announcements=announcements,
+        joined_events=joined_events,
+        badges=badges,
+        booking_count=booking_count,
+        joined_count=joined_count,
+        created_count=created_count
     )
 
 
@@ -320,6 +361,27 @@ def join_event():
         )
         conn.commit()
 
+    conn.close()
+
+    return redirect(url_for("booking"))
+
+@app.route("/unjoin_event", methods=["POST"])
+def unjoin_event():
+
+    if "username" not in session:
+        return redirect(url_for("login"))
+
+    username = session["username"]
+    event_id = request.form["event_id"]
+
+    conn = get_db_connection()
+
+    conn.execute(
+        "DELETE FROM joined_events WHERE username = ? AND event_id = ?",
+        (username, event_id)
+    )
+
+    conn.commit()
     conn.close()
 
     return redirect(url_for("booking"))
