@@ -1,28 +1,131 @@
 <!DOCTYPE html>
 <html>
 <head>
+
     <title>SquadUp Home</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
 </head>
+
 <body>
 
-<nav>
-    <a href="/">🏀 SquadUp</a>
+<!-- NAVBAR -->
 
-    &nbsp;&nbsp;&nbsp;&nbsp;
+<nav class="navbar">
 
-    <a href="/">Home</a>
-    <a href="/about">About Us</a>
-    <a href="/register">Register</a>
+    <div class="logo">
+        🏀 SquadUp
+    </div>
 
-    &nbsp;&nbsp;&nbsp;&nbsp;
+    <div class="nav-links">
 
-    <a href="/login">👤</a>
+        <a href="/">Home</a>
+        <a href="/about">About Us</a>
+        <a href="/register">Register</a>
+        <a href="/login">Login</a>
+
+    </div>
+
 </nav>
 
-<hr>
+<!-- HERO SECTION -->
 
-<h1>Welcome to SquadUp 🏀</h1>
-<p>Your campus sports booking & team finder system</p>
+<section class="hero">
 
+    <div class="hero-text">
+
+        <h1>
+            Find courts and players near you
+        </h1>
+
+        <p>
+            Book sports facilities, join events,
+            and connect with players anytime.
+        </p>
+
+        <a href="/booking" class="hero-btn">
+            Explore Now
+        </a>
+
+    </div>
+
+    <div class="hero-image">
+
+        <img src="{{ url_for('static',
+        filename='images/coverpage.png') }}">
+
+    </div>
+
+</section>
+
+<!-- ABOUT SECTION -->
+
+<section class="about-section">
+
+    <div class="about-image">
+
+        <img src="{{ url_for('static',
+        filename='images/coverpage.png') }}">
+
+    </div>
+
+    <div class="about-text">
+
+        <h2>What is SquadUp?</h2>
+
+        <p>
+            SquadUp helps students book sports facilities,
+            create events, join games, and connect with
+            other players in the community.
+        </p>
+
+        <p>
+            Users can earn achievement badges,
+            receive notifications, and manage
+            their sports activities easily.
+        </p>
+
+    </div>
+
+</section>
+
+<!-- FEATURES SECTION -->
+
+<section class="features">
+
+    <h2>Features</h2>
+
+    <div class="feature-container">
+
+        <div class="feature-card">
+            <h3>🏟 Facility Booking</h3>
+            <p>Book courts and sports facilities easily.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>🎯 Join Events</h3>
+            <p>Join games and meet new teammates.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>🏅 Badge System</h3>
+            <p>Earn badges through active participation.</p>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+
+    <h3>SquadUp 🏀</h3>
+
+    <p>
+        Connect. Play. Compete.
+    </p>
+
+</footer>
+
+</section>
 </body>
 </html>

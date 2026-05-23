@@ -8,8 +8,8 @@ app.secret_key = "squadup_secret_key"
 app.config["MAIL_SERVER"] = "smtp.gmail.com"
 app.config["MAIL_PORT"] = 587
 app.config["MAIL_USE_TLS"] = True
-app.config["MAIL_USERNAME"] = "youractualgmail@gmail.com"
-app.config["MAIL_PASSWORD"] = "abcd efgh ijkl mnop"
+app.config["MAIL_USERNAME"] = "squadupheregmail@gmail.com"
+app.config["MAIL_PASSWORD"] = "squadup123"
 mail = Mail(app)
 
 ADMIN_USERNAME = "admin"
