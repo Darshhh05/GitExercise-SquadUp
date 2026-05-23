@@ -9,14 +9,74 @@
 
 <h2>My Profile</h2>
 
-<!-- 🔥 AVATAR -->
 {% if user.avatar %}
     <img src="{{ url_for('static', filename='images/' + user.avatar) }}" width="120">
 {% else %}
     <p>No avatar</p>
 {% endif %}
 
+<p><strong>Full Name:</strong> {{ user.full_name }}</p>
 <p><strong>Username:</strong> {{ username }}</p>
+<p><strong>Skill Level:</strong> {{ user.skill_level }}</p>
+
+<hr>
+
+<h2>My Activity Badges</h2>
+
+<p><strong>Total Bookings:</strong> {{ booking_count }}</p>
+<p><strong>Events Joined:</strong> {{ joined_count }}</p>
+<p><strong>Events Created:</strong> {{ created_count }}</p>
+
+{% if badges %}
+
+    {% for badge in badges %}
+
+        {% if badge == "Active Player" %}
+
+    <img src="{{ url_for('static', filename='images/active_player.png') }}" width="80">
+    <p>{{ badge }}</p>
+
+{% elif badge == "Team Player" %}
+
+    <img src="{{ url_for('static', filename='images/team_player.png') }}" width="80">
+    <p>{{ badge }}</p>
+
+{% elif badge == "Team Organizer" %}
+
+    <img src="{{ url_for('static', filename='images/team_organizer.png') }}" width="80">
+    <p>{{ badge }}</p>
+
+{% elif badge == "SquadUp Champion" %}
+
+    <img src="{{ url_for('static', filename='images/squadup_champion.png') }}" width="80">
+    <p>{{ badge }}</p>
+
+{% endif %}
+
+        <br>
+
+    {% endfor %}
+
+{% else %}
+
+    <p>No badges earned yet.</p>
+
+{% endif %}
+
+<hr>
+
+<h2>Announcements</h2>
+
+{% if announcements %}
+    {% for announcement in announcements %}
+        <div>
+            <p>{{ announcement.message }}</p>
+        </div>
+        <br>
+    {% endfor %}
+{% else %}
+    <p>No announcements yet.</p>
+{% endif %}
 
 <hr>
 
@@ -29,6 +89,7 @@
         <th>Facility</th>
         <th>Date</th>
         <th>Time</th>
+        <th>Status</th>
         <th>Action</th>
     </tr>
 
@@ -38,6 +99,7 @@
         <td>{{ booking.facility }}</td>
         <td>{{ booking.date }}</td>
         <td>{{ booking.start_time }} - {{ booking.end_time }}</td>
+        <td>{{ booking.status }}</td>
         <td>
             <a href="{{ url_for('delete_booking', booking_id=booking.id) }}">Delete</a>
         </td>
@@ -59,6 +121,7 @@
         <th>Facility</th>
         <th>Date</th>
         <th>Time</th>
+        <th>Status</th>
     </tr>
 
     {% for booking in past_bookings %}
@@ -67,6 +130,7 @@
         <td>{{ booking.facility }}</td>
         <td>{{ booking.date }}</td>
         <td>{{ booking.start_time }} - {{ booking.end_time }}</td>
+        <td>{{ booking.status }}</td>
     </tr>
     {% endfor %}
 </table>

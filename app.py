@@ -1,12 +1,21 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+from flask_mail import Mail, Message
 import sqlite3
 from datetime import date
 
 app = Flask(__name__)
 app.secret_key = "squadup_secret_key"
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USERNAME"] = "squadupheregmail@gmail.com"
+app.config["MAIL_PASSWORD"] = "squadup123"
+mail = Mail(app)
+
+ADMIN_USERNAME = "admin"
+ADMIN_PASSWORD = "admin123"
 
 
-# ---------- DATABASE ----------
 def get_db_connection():
     conn = sqlite3.connect("database.db")
     conn.row_factory = sqlite3.Row
@@ -14,19 +23,27 @@ def get_db_connection():
 
 
 def fix_database():
-    conn = sqlite3.connect("database.db")
+    conn = get_db_connection()
 
-    # USERS (WITH AVATAR)
     conn.execute("""
-    CREATE TABLE IF NOT EXISTS users (
+  CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    full_name TEXT,
+    username TEXT UNIQUE,
+    email TEXT,
+    password TEXT,
+    skill_level TEXT,
+    avatar TEXT
+)
+""")
+
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS facilities (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        username TEXT UNIQUE,
-        password TEXT,
-        avatar TEXT
+        name TEXT UNIQUE
     )
     """)
 
-    # BOOKINGS
     conn.execute("""
     CREATE TABLE IF NOT EXISTS bookings (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -35,26 +52,25 @@ def fix_database():
         date TEXT,
         start_time TEXT,
         end_time TEXT,
-        status TEXT
+        status TEXT DEFAULT 'Pending'
     )
     """)
 
-    # EVENTS
     conn.execute("""
     CREATE TABLE IF NOT EXISTS events (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         organizer TEXT,
-        created_by TEXT NOT NULL,
+        created_by TEXT,
         facility TEXT,
         date TEXT,
         start_time TEXT,
         end_time TEXT,
-        level TEXT
+        level TEXT,
+        status TEXT DEFAULT 'Pending'
     )
     """)
 
-    # JOINED EVENTS
     conn.execute("""
     CREATE TABLE IF NOT EXISTS joined_events (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -63,25 +79,35 @@ def fix_database():
     )
     """)
 
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS announcements (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        message TEXT
+    )
+    """)
+
     conn.commit()
     conn.close()
 
 
-# ---------- HOME ----------
 @app.route("/")
 def home():
-    if "username" in session:
-        return redirect(url_for("dashboard"))
     return render_template("index.html")
 
+@app.route("/about")
+def about():
+    return render_template("about.html")
 
-# ---------- REGISTER ----------
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
+        full_name = request.form.get("full_name")
         username = request.form["username"]
+        email = request.form["email"]
         password = request.form["password"]
-        avatar = request.form["avatar"]  # 👈 IMPORTANT
+        skill_level = request.form.get("skill_level")
+        avatar = request.form["avatar"]
 
         conn = get_db_connection()
 
@@ -94,11 +120,11 @@ def register():
             conn.close()
             return "Username already exists!"
 
-        conn.execute(
-            "INSERT INTO users (username, password, avatar) VALUES (?, ?, ?)",
-            (username, password, avatar)
-        )
-
+        conn.execute("""
+    INSERT INTO users (full_name, username, email, password, skill_level, avatar)
+    VALUES (?, ?, ?, ?, ?, ?)
+    """, (full_name, username, email, password, skill_level, avatar)) 
+        
         conn.commit()
         conn.close()
 
@@ -107,7 +133,6 @@ def register():
     return render_template("register.html")
 
 
-# ---------- LOGIN ----------
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -115,12 +140,10 @@ def login():
         password = request.form["password"]
 
         conn = get_db_connection()
-
         user = conn.execute(
             "SELECT * FROM users WHERE username = ? AND password = ?",
             (username, password)
         ).fetchone()
-
         conn.close()
 
         if user:
@@ -132,7 +155,6 @@ def login():
     return render_template("login.html")
 
 
-# ---------- DASHBOARD ----------
 @app.route("/dashboard")
 def dashboard():
     if "username" not in session:
@@ -143,7 +165,6 @@ def dashboard():
 
     conn = get_db_connection()
 
-    # GET USER (FOR AVATAR)
     user = conn.execute(
         "SELECT * FROM users WHERE username = ?",
         (username,)
@@ -159,6 +180,46 @@ def dashboard():
         (username, today)
     ).fetchall()
 
+    announcements = conn.execute(
+        "SELECT * FROM announcements ORDER BY id DESC"
+    ).fetchall()
+
+    joined_events = conn.execute("""
+        SELECT events.*
+        FROM joined_events
+        JOIN events ON joined_events.event_id = events.id
+        WHERE joined_events.username = ?
+    """, (username,)).fetchall()
+
+    booking_count = conn.execute(
+        "SELECT COUNT(*) FROM bookings WHERE username = ?",
+        (username,)
+    ).fetchone()[0]
+
+    joined_count = conn.execute(
+        "SELECT COUNT(*) FROM joined_events WHERE username = ?",
+        (username,)
+    ).fetchone()[0]
+
+    created_count = conn.execute(
+        "SELECT COUNT(*) FROM events WHERE created_by = ?",
+        (username,)
+    ).fetchone()[0]
+
+    badges = []
+
+    if booking_count >= 3:
+        badges.append("Active Player")
+
+    if joined_count >= 3:
+        badges.append("Team Player")
+
+    if created_count >= 2:
+        badges.append("Team Organizer")
+
+    if booking_count >= 5 and joined_count >= 5:
+        badges.append("SquadUp Champion")
+
     conn.close()
 
     return render_template(
@@ -166,25 +227,16 @@ def dashboard():
         username=username,
         user=user,
         due_bookings=due_bookings,
-        past_bookings=past_bookings
+        past_bookings=past_bookings,
+        announcements=announcements,
+        joined_events=joined_events,
+        badges=badges,
+        booking_count=booking_count,
+        joined_count=joined_count,
+        created_count=created_count
     )
 
 
-# ---------- DELETE BOOKING ----------
-@app.route("/delete_booking/<int:booking_id>")
-def delete_booking(booking_id):
-    if "username" not in session:
-        return redirect(url_for("login"))
-
-    conn = get_db_connection()
-    conn.execute("DELETE FROM bookings WHERE id = ?", (booking_id,))
-    conn.commit()
-    conn.close()
-
-    return redirect(url_for("dashboard"))
-
-
-# ---------- BOOKING PAGE ----------
 @app.route("/booking")
 def booking():
     if "username" not in session:
@@ -192,7 +244,8 @@ def booking():
 
     conn = get_db_connection()
 
-    events = conn.execute("SELECT * FROM events").fetchall()
+    facilities = conn.execute("SELECT * FROM facilities").fetchall()
+    events = conn.execute("SELECT * FROM events WHERE status = 'Approved'").fetchall()
 
     events_with_members = []
 
@@ -210,32 +263,37 @@ def booking():
             "date": event["date"],
             "start_time": event["start_time"],
             "end_time": event["end_time"],
+            "level": event["level"],
             "members": [m["username"] for m in members]
         })
 
     conn.close()
 
-    return render_template("booking.html", events=events_with_members)
+    return render_template(
+        "booking.html",
+        facilities=facilities,
+        events=events_with_members
+    )
 
 
-# ---------- BOOK ----------
 @app.route("/book", methods=["POST"])
 def book():
     if "username" not in session:
         return redirect(url_for("login"))
-
-    username = session["username"]
-    facility = request.form["facility"]
-    date_selected = request.form["date"]
-    start_time = request.form["start_time"]
-    end_time = request.form["end_time"]
 
     conn = get_db_connection()
 
     conn.execute("""
         INSERT INTO bookings (username, facility, date, start_time, end_time, status)
         VALUES (?, ?, ?, ?, ?, ?)
-    """, (username, facility, date_selected, start_time, end_time, "Pending"))
+    """, (
+        session["username"],
+        request.form["facility"],
+        request.form["date"],
+        request.form["start_time"],
+        request.form["end_time"],
+        "Pending"
+    ))
 
     conn.commit()
     conn.close()
@@ -243,7 +301,22 @@ def book():
     return redirect(url_for("dashboard"))
 
 
-# ---------- CREATE EVENT ----------
+@app.route("/delete_booking/<int:booking_id>")
+def delete_booking(booking_id):
+    if "username" not in session:
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+    conn.execute(
+        "DELETE FROM bookings WHERE id = ? AND username = ?",
+        (booking_id, session["username"])
+    )
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("dashboard"))
+
+
 @app.route("/create_event", methods=["POST"])
 def create_event():
     if "username" not in session:
@@ -251,28 +324,22 @@ def create_event():
 
     organizer = session["username"]
 
-    event_name = request.form["event_name"]
-    facility = request.form["facility"]
-    date_selected = request.form["date"]
-    start_time = request.form["start_time"]
-    end_time = request.form["end_time"]
-    level = request.form["level"]
-
     conn = get_db_connection()
 
     conn.execute("""
         INSERT INTO events
-        (name, organizer, created_by, facility, date, start_time, end_time, level)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        (name, organizer, created_by, facility, date, start_time, end_time, level, status)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
-        event_name,
+        request.form["event_name"],
         organizer,
-        organizer,  # 👈 FIX
-        facility,
-        date_selected,
-        start_time,
-        end_time,
-        level
+        organizer,
+        request.form["facility"],
+        request.form["date"],
+        request.form["start_time"],
+        request.form["end_time"],
+        request.form["level"],
+        "Pending"
     ))
 
     conn.commit()
@@ -281,7 +348,6 @@ def create_event():
     return redirect(url_for("booking"))
 
 
-# ---------- JOIN EVENT ----------
 @app.route("/join_event", methods=["POST"])
 def join_event():
     if "username" not in session:
@@ -308,15 +374,253 @@ def join_event():
 
     return redirect(url_for("booking"))
 
+@app.route("/unjoin_event", methods=["POST"])
+def unjoin_event():
 
-# ---------- LOGOUT ----------
+    if "username" not in session:
+        return redirect(url_for("login"))
+
+    username = session["username"]
+    event_id = request.form["event_id"]
+
+    conn = get_db_connection()
+
+    conn.execute(
+        "DELETE FROM joined_events WHERE username = ? AND event_id = ?",
+        (username, event_id)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("booking"))
+
+
+@app.route("/admin_login", methods=["GET", "POST"])
+def admin_login():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        if username == ADMIN_USERNAME and password == ADMIN_PASSWORD:
+            session["admin"] = username
+            return redirect(url_for("admin_dashboard"))
+
+        return "Invalid admin username or password"
+
+    return render_template("admin_login.html")
+
+
+@app.route("/admin_dashboard")
+def admin_dashboard():
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    conn = get_db_connection()
+
+    facilities = conn.execute("SELECT * FROM facilities").fetchall()
+    announcements = conn.execute("SELECT * FROM announcements ORDER BY id DESC").fetchall()
+    users = conn.execute("SELECT * FROM users").fetchall()
+    bookings = conn.execute("SELECT * FROM bookings").fetchall()
+    events = conn.execute("SELECT * FROM events").fetchall()
+
+    conn.close()
+
+    return render_template(
+        "admin_dashboard.html",
+        facilities=facilities,
+        announcements=announcements,
+        users=users,
+        bookings=bookings,
+        events=events
+    )
+
+
+@app.route("/add_facility", methods=["POST"])
+def add_facility():
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    facility_name = request.form["facility_name"]
+
+    conn = get_db_connection()
+    conn.execute("INSERT OR IGNORE INTO facilities (name) VALUES (?)", (facility_name,))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/delete_facility/<int:facility_id>")
+def delete_facility(facility_id):
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    conn = get_db_connection()
+    conn.execute("DELETE FROM facilities WHERE id = ?", (facility_id,))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/post_announcement", methods=["POST"])
+def post_announcement():
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    message = request.form["message"]
+
+    conn = get_db_connection()
+    conn.execute("INSERT INTO announcements (message) VALUES (?)", (message,))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/delete_announcement/<int:announcement_id>")
+def delete_announcement(announcement_id):
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    conn = get_db_connection()
+    conn.execute("DELETE FROM announcements WHERE id = ?", (announcement_id,))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/approve_booking/<int:booking_id>")
+def approve_booking(booking_id):
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    conn = get_db_connection()
+
+    booking = conn.execute(
+        "SELECT * FROM bookings WHERE id = ?",
+        (booking_id,)
+    ).fetchone()
+
+    user = conn.execute(
+        "SELECT * FROM users WHERE username = ?",
+        (booking["username"],)
+    ).fetchone()
+
+    conn.execute(
+        "UPDATE bookings SET status = 'Approved' WHERE id = ?",
+        (booking_id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    if user and user["email"]:
+        msg = Message(
+            "Booking Approved - SquadUp",
+            sender=app.config["MAIL_USERNAME"],
+            recipients=[user["email"]]
+        )
+
+        msg.body = f"""
+Hello {user['username']},
+
+Your booking for {booking['facility']} on {booking['date']}
+from {booking['start_time']} to {booking['end_time']} has been approved.
+
+Thank you for using SquadUp.
+"""
+
+        mail.send(msg)
+
+    return redirect(url_for("admin_dashboard"))
+
+@app.route("/reject_booking/<int:booking_id>")
+def reject_booking(booking_id):
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    conn = get_db_connection()
+
+    booking = conn.execute(
+        "SELECT * FROM bookings WHERE id = ?",
+        (booking_id,)
+    ).fetchone()
+
+    user = conn.execute(
+        "SELECT * FROM users WHERE username = ?",
+        (booking["username"],)
+    ).fetchone()
+
+    conn.execute(
+        "UPDATE bookings SET status = 'Rejected' WHERE id = ?",
+        (booking_id,)
+    )
+
+    conn.commit()
+    conn.close()
+
+    if user and user["email"]:
+        msg = Message(
+            "Booking Rejected - SquadUp",
+            sender=app.config["MAIL_USERNAME"],
+            recipients=[user["email"]]
+        )
+
+        msg.body = f"""
+Hello {user['username']},
+
+Your booking for {booking['facility']} on {booking['date']}
+from {booking['start_time']} to {booking['end_time']} has been rejected.
+
+Thank you for using SquadUp.
+"""
+
+        mail.send(msg)
+
+    return redirect(url_for("admin_dashboard")) 
+
+
+@app.route("/approve_event/<int:event_id>")
+def approve_event(event_id):
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    conn = get_db_connection()
+    conn.execute("UPDATE events SET status = 'Approved' WHERE id = ?", (event_id,))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/reject_event/<int:event_id>")
+def reject_event(event_id):
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    conn = get_db_connection()
+    conn.execute("UPDATE events SET status = 'Rejected' WHERE id = ?", (event_id,))
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("admin_dashboard"))
+
+
+@app.route("/admin_logout")
+def admin_logout():
+    session.pop("admin", None)
+    return redirect(url_for("home"))
+
+
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect(url_for("home"))
 
 
-# ---------- RUN ----------
 if __name__ == "__main__":
     fix_database()
     app.run(debug=True)
