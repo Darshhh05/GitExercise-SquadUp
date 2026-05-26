@@ -2,6 +2,45 @@
 <html>
 <head>
     <title>Booking</title>
+
+    <style>
+
+        body{
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        h1, h2{
+            color: #333;
+        }
+
+        form{
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        input, select, button{
+            padding: 8px;
+            margin-top: 5px;
+        }
+
+        button{
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover{
+            background-color: #45a049;
+        }
+
+    </style>
+
 </head>
 <body>
 
@@ -92,7 +131,7 @@
 
 {% for event in events %}
 
-<div style="border:1px solid black; padding:10px; margin-bottom:10px;">
+<div style="border:1px solid black; padding:10px; margin-bottom:10px; background:white; border-radius:8px;">
 
     <b>{{ event.name }}</b><br>
 
