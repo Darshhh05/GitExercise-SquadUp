@@ -2,6 +2,191 @@
 <html>
 <head>
     <title>Booking</title>
+
+    <style>
+
+        body{
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+        }
+
+        h1,h2{
+            color:#333;
+        }
+
+        form{
+            background:white;
+            padding:15px;
+            border-radius:8px;
+            margin-bottom:20px;
+        }
+
+        input,select,button{
+            padding:8px;
+            margin-top:5px;
+        }
+
+        button{
+            background-color:#4CAF50;
+            color:white;
+            border:none;
+            border-radius:5px;
+            cursor:pointer;
+        }
+
+        button:hover{
+            background-color:#45a049;
+        }
+
+        .event-card{
+            background:white;
+            padding:15px;
+            border-radius:8px;
+            margin-bottom:15px;
+        }
+        body{
+    font-family:'Poppins',sans-serif;
+    background:linear-gradient(to right,#1d4ed8,#3b82f6);
+    color:white;
+    margin:0;
+    padding:40px;
+}
+
+h1,h2{
+    text-align:center;
+    font-weight:800;
+}
+
+h1{
+    font-size:55px;
+}
+
+h2{
+    font-size:35px;
+    margin-top:50px;
+}
+
+form{
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(15px);
+    -webkit-backdrop-filter:blur(15px);
+    border:2px solid rgba(255,255,255,0.3);
+    border-radius:40px;
+    padding:35px;
+    margin-bottom:40px;
+    box-shadow:0 8px 25px rgba(0,0,0,0.2);
+}
+
+input,
+select{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:15px;
+    margin-top:8px;
+    margin-bottom:20px;
+    font-size:16px;
+}
+
+button{
+    background:#2563eb;
+    color:white;
+    border:none;
+    padding:12px 25px;
+    border-radius:15px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#1e40af;
+}
+
+.facility-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+}
+
+.facility-card{
+    background:white;
+    color:#1e3a8a;
+    border-radius:20px;
+    overflow:hidden;
+    text-align:center;
+    box-shadow:0 5px 15px rgba(0,0,0,0.15);
+    transition:0.3s;
+}
+
+.facility-card:hover{
+    transform:translateY(-8px);
+}
+
+.facility-card img{
+    width:100%;
+    height:180px;
+    object-fit:cover;
+}
+
+.facility-card h3{
+    padding:10px;
+}
+
+.event-card{
+    background:white;
+    color:#1e3a8a;
+    border:3px solid #2563eb;
+    border-radius:25px;
+    padding:15px;
+    margin:20px auto;
+    max-width:500px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.15);
+}
+
+.event-card h3{
+    border:2px solid #2563eb;
+    border-radius:12px;
+    padding:10px;
+    text-align:center;
+}
+
+.event-card p{
+    border:2px solid #2563eb;
+    border-radius:12px;
+    padding:8px;
+}
+
+.hidden-event{
+    display:none;
+}
+
+a{
+    color:white;
+    font-weight:bold;
+    text-decoration:none;
+}
+ .join-btn{
+    background:#22c55e;
+    color:white;
+    border:none;
+    padding:10px 20px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.unjoin-btn{
+    background:#2a25cd;
+    color:white;
+    border:none;
+    padding:10px 20px;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+    </style>
+
 </head>
 <body>
 
@@ -10,10 +195,53 @@
 <form method="POST" action="{{ url_for('book') }}">
 
     Facility:
-    <select name="facility" required>
-        {% for facility in facilities %}
-            <option value="{{ facility.name }}">{{ facility.name }}</option>
-        {% endfor %}
+    <h3>Choose Facility</h3>
+
+<div class="facility-grid">
+
+    <label class="facility-card">
+        <input type="radio" name="facility" value="Badminton Court" required>
+        <img src="{{ url_for('static', filename='images/badminton.jpg') }}">
+        <h3>Badminton Court</h3>
+    </label>
+
+    <label class="facility-card">
+        <input type="radio" name="facility" value="Basketball Court">
+        <img src="{{ url_for('static', filename='images/basketball.jpg') }}">
+        <h3>Basketball Court</h3>
+    </label>
+
+    <label class="facility-card">
+        <input type="radio" name="facility" value="Futsal Court">
+        <img src="{{ url_for('static', filename='images/futsal.jpg') }}">
+        <h3>Futsal Court</h3>
+    </label>
+
+    <label class="facility-card">
+        <input type="radio" name="facility" value="Pickleball Court">
+        <img src="{{ url_for('static', filename='images/pickleball.jpg') }}">
+        <h3>Pickleball</h3>
+    </label>
+
+    <label class="facility-card">
+        <input type="radio" name="facility" value="Ping Pong">
+        <img src="{{ url_for('static', filename='images/pingpong.jpg') }}">
+        <h3>Ping Pong</h3>
+    </label>
+
+    <label class="facility-card">
+        <input type="radio" name="facility" value="Swimming Pool">
+        <img src="{{ url_for('static', filename='images/swimmingpool.jpg') }}">
+        <h3>Swimming Pool</h3>
+    </label>
+
+    <label class="facility-card">
+        <input type="radio" name="facility" value="Tennis Court">
+        <img src="{{ url_for('static', filename='images/tennis.jpg') }}">
+        <h3>Tennis Court</h3>
+    </label>
+
+</div>
     </select>
 
     <br><br>
@@ -50,10 +278,14 @@
 
     Facility:
     <select name="facility" required>
-        {% for facility in facilities %}
-            <option value="{{ facility.name }}">{{ facility.name }}</option>
-        {% endfor %}
-    </select>
+    <option value="Badminton Court">Badminton Court</option>
+    <option value="Basketball Court">Basketball Court</option>
+    <option value="Futsal Court">Futsal Court</option>
+    <option value="Pickleball Court">Pickleball Court</option>
+    <option value="Ping Pong">Ping Pong</option>
+    <option value="Swimming Pool">Swimming Pool</option>
+    <option value="Tennis Court">Tennis Court</option>
+</select>
 
     <br><br>
 
@@ -90,47 +322,76 @@
 <h2>Approved Events</h2>
 
 {% if events %}
+
     {% for event in events %}
 
-        <div>
+    <div class="event-card">
 
-            <h3>{{ event.name }}</h3>
+        <h3>{{ event.name }}</h3>
 
-            <p><strong>Organizer:</strong> {{ event.organizer }}</p>
-            <p><strong>Facility:</strong> {{ event.facility }}</p>
-            <p><strong>Date:</strong> {{ event.date }}</p>
-            <p><strong>Time:</strong> {{ event.start_time }} - {{ event.end_time }}</p>
-            <p><strong>Level:</strong> {{ event.level }}</p>
+        <p><strong>Organizer:</strong> {{ event.organizer }}</p>
+        <p><strong>Facility:</strong> {{ event.facility }}</p>
+        <p><strong>Date:</strong> {{ event.date }}</p>
+        <p><strong>Time:</strong> {{ event.start_time }} - {{ event.end_time }}</p>
+        <p><strong>Level:</strong> {{ event.level }}</p>
 
-            <p><strong>Members:</strong></p>
+        <strong>Members:</strong>
 
-            <ul>
-                {% for m in event.members %}
-                    <li>{{ m }}</li>
-                {% else %}
-                    <li>No members yet</li>
-                {% endfor %}
-            </ul>
+        <ul>
+            {% for m in event.members %}
+                <li>{{ m }}</li>
+            {% else %}
+                <li>No members yet</li>
+            {% endfor %}
+        </ul>
 
-            <form method="POST" action="{{ url_for('join_event') }}">
-                <input type="hidden" name="event_id" value="{{ event.id }}">
-                <button type="submit">Join</button>
-            </form>
+        <form method="POST" action="{{ url_for('join_event') }}">
+            <input type="hidden" name="event_id" value="{{ event.id }}">
+            <button type="submit">Join</button>
+        </form>
 
-            <br>
+        <br>
 
-            <form method="POST" action="{{ url_for('unjoin_event') }}">
-                <input type="hidden" name="event_id" value="{{ event.id }}">
-                <button type="submit">Unjoin</button>
-            </form>
+        <form method="POST" action="{{ url_for('unjoin_event') }}">
+            <input type="hidden" name="event_id" value="{{ event.id }}">
+            <button type="submit">Unjoin</button>
+        </form>
 
-        </div>
-
-        <hr>
+    </div>
 
     {% endfor %}
+
+
+<div id="hidden-events" style="display:none;">
+
+{% for event in hidden_events %}
+
+<div class="event-card">
+    <h3>{{ event.name }}</h3>
+
+    <p><strong>Organizer:</strong> {{ event.organizer }}</p>
+    <p><strong>Facility:</strong> {{ event.facility }}</p>
+    <p><strong>Date:</strong> {{ event.date }}</p>
+    <p><strong>Time:</strong> {{ event.start_time }} - {{ event.end_time }}</p>
+    <p><strong>Level:</strong> {{ event.level }}</p>
+</div>
+
+{% endfor %}
+
+</div>
+
+{% if has_more_events %}
+<div class="more-events">
+    <button type="button" onclick="showMoreEvents()">
+        More Events
+    </button>
+</div>
+{% endif %}
+
 {% else %}
+
     <p>No approved events available yet.</p>
+
 {% endif %}
 
 <br>
@@ -139,10 +400,19 @@
 <a href="{{ url_for('home') }}">Home</a>
 
 <script>
-    const today = new Date().toISOString().split("T")[0];
+const today = new Date().toISOString().split("T")[0];
 
-    document.getElementById("book_date").setAttribute("min", today);
-    document.getElementById("event_date").setAttribute("min", today);
+document.getElementById("book_date").setAttribute("min", today);
+document.getElementById("event_date").setAttribute("min", today);
+
+function showMoreEvents() {
+    document.getElementById("hidden-events").style.display = "block";
+
+    const btn = document.querySelector(".more-events");
+    if (btn) {
+        btn.style.display = "none";
+    }
+}
 </script>
 
 </body>

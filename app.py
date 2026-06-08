@@ -244,8 +244,13 @@ def booking():
 
     conn = get_db_connection()
 
-    facilities = conn.execute("SELECT * FROM facilities").fetchall()
-    events = conn.execute("SELECT * FROM events WHERE status = 'Approved'").fetchall()
+    facilities = conn.execute(
+        "SELECT * FROM facilities"
+    ).fetchall()
+
+    events = conn.execute(
+        "SELECT * FROM events WHERE status = 'Approved'"
+    ).fetchall()
 
     events_with_members = []
 
@@ -267,12 +272,19 @@ def booking():
             "members": [m["username"] for m in members]
         })
 
+    
+    visible_events = events_with_members[:5]
+    hidden_events = events_with_members[5:]
+    has_more_events = len(events_with_members) > 5
+
     conn.close()
 
     return render_template(
         "booking.html",
         facilities=facilities,
-        events=events_with_members
+        events=visible_events,
+        hidden_events=hidden_events,
+        has_more_events=has_more_events
     )
 
 
@@ -292,7 +304,7 @@ def book():
         request.form["date"],
         request.form["start_time"],
         request.form["end_time"],
-        "Pending"
+        "Approved"
     ))
 
     conn.commit()
@@ -339,7 +351,7 @@ def create_event():
         request.form["start_time"],
         request.form["end_time"],
         request.form["level"],
-        "Pending"
+        "Approved"
     ))
 
     conn.commit()
