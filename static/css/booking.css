@@ -1,0 +1,276 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+/* =========================
+BODY
+========================= */
+
+body {
+font-family: 'Poppins', sans-serif;
+background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+color: white;
+margin: 0;
+padding: 35px;
+min-height: 100vh;
+}
+
+/* =========================
+PAGE TITLE
+========================= */
+
+.page-title {
+font-family: 'Cormorant Garamond', serif;
+font-size: 60px;
+font-style: italic;
+font-weight: 700;
+text-align: left;
+margin-bottom: 35px;
+color: white;
+letter-spacing: 1px;
+}
+
+/* =========================
+BOOKING + EVENT SECTION
+========================= */
+
+.booking-layout {
+display: grid;
+grid-template-columns: 1.2fr 0.8fr;
+gap: 30px;
+margin-bottom: 35px;
+}
+
+/* =========================
+GLASS BOXES
+========================= */
+
+.booking-box,
+.event-box,
+.approved-events-box {
+background: rgba(255,255,255,0.12);
+backdrop-filter: blur(20px);
+-webkit-backdrop-filter: blur(20px);
+
+
+border: 2px solid rgba(255,255,255,0.25);
+
+border-radius: 30px;
+padding: 30px;
+box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+
+
+}
+
+/* =========================
+SECTION HEADINGS
+========================= */
+
+.booking-box h2,
+.event-box h2,
+.approved-events-box h2 {
+font-family: 'Cormorant Garamond', serif;
+font-size: 38px;
+font-style: italic;
+font-weight: 700;
+color: white;
+margin-top: 0;
+margin-bottom: 25px;
+}
+
+/* =========================
+FACILITY GRID
+========================= */
+
+.facility-grid {
+display: grid;
+grid-template-columns: repeat(2, 1fr);
+gap: 18px;
+}
+
+.facility-card {
+background: white;
+color: #1e3a8a;
+border-radius: 22px;
+overflow: hidden;
+text-align: center;
+cursor: pointer;
+transition: 0.3s ease;
+box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+}
+
+.facility-card:hover {
+transform: translateY(-8px);
+}
+
+.facility-card img {
+width: 100%;
+height: 130px;
+object-fit: cover;
+}
+
+.facility-card h3 {
+font-family: 'Cormorant Garamond', serif;
+font-size: 24px;
+font-style: italic;
+font-weight: 700;
+margin: 0;
+padding: 12px;
+}
+
+.facility-card input[type="radio"] {
+margin: 10px auto;
+width: auto;
+}
+
+/* =========================
+FORM
+========================= */
+
+label {
+display: block;
+font-weight: 600;
+margin-bottom: 6px;
+}
+
+input,
+select {
+width: 100%;
+padding: 14px;
+border: none;
+border-radius: 15px;
+margin-top: 8px;
+margin-bottom: 18px;
+font-size: 15px;
+box-sizing: border-box;
+}
+
+/* =========================
+BUTTONS
+========================= */
+
+button {
+background: #2563eb;
+color: white;
+border: none;
+padding: 12px 28px;
+border-radius: 15px;
+font-size: 16px;
+font-weight: 700;
+cursor: pointer;
+transition: 0.3s ease;
+}
+
+button:hover {
+background: #1e40af;
+transform: translateY(-2px);
+}
+
+.join-btn {
+background: #22c55e;
+}
+
+.join-btn:hover {
+background: #16a34a;
+}
+
+.unjoin-btn {
+background: #4338ca;
+}
+
+.unjoin-btn:hover {
+background: #312e81;
+}
+
+/* =========================
+APPROVED EVENTS
+========================= */
+
+.approved-events-box {
+margin-top: 20px;
+}
+
+.event-list {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+gap: 20px;
+}
+
+.event-card {
+background: white;
+color: #1e3a8a;
+border-radius: 25px;
+padding: 20px;
+border-left: 8px solid #facc15;
+box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+}
+
+.event-card h3 {
+font-family: 'Cormorant Garamond', serif;
+font-style: italic;
+font-size: 28px;
+font-weight: 700;
+margin-top: 0;
+border-bottom: 2px solid #2563eb;
+padding-bottom: 10px;
+}
+
+.event-card p {
+background: #eff6ff;
+border-radius: 12px;
+padding: 10px;
+margin: 8px 0;
+}
+
+.event-card ul {
+background: #eff6ff;
+border-radius: 12px;
+padding: 15px 15px 15px 30px;
+}
+
+/* =========================
+MORE EVENTS
+========================= */
+
+.more-events {
+text-align: center;
+margin-top: 25px;
+}
+
+/* =========================
+LINKS
+========================= */
+
+.page-links {
+margin-top: 30px;
+}
+
+a {
+color: white;
+text-decoration: none;
+font-weight: 700;
+}
+
+a:hover {
+text-decoration: underline;
+}
+
+/* =========================
+RESPONSIVE
+========================= */
+
+@media (max-width: 992px) {
+
+
+.booking-layout {
+    grid-template-columns: 1fr;
+}
+
+.page-title {
+    text-align: center;
+    font-size: 48px;
+}
+
+.facility-grid {
+    grid-template-columns: 1fr;
+}
+
+}

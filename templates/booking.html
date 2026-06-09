@@ -1,148 +1,226 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Booking</title>
+    <title>Booking Page</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/booking.css') }}">
 </head>
 <body>
 
-<h1>Book Facility</h1>
+<h1 class="page-title">Booking Page</h1>
 
-<form method="POST" action="{{ url_for('book') }}">
+<div class="booking-layout">
 
-    Facility:
-    <select name="facility" required>
-        {% for facility in facilities %}
-            <option value="{{ facility.name }}">{{ facility.name }}</option>
-        {% endfor %}
-    </select>
+    <!-- BOOK FACILITY BOX -->
+    <form class="booking-box" method="POST" action="{{ url_for('book') }}">
 
-    <br><br>
+        <h2>Book Facility</h2>
 
-    Date:
-    <input type="date" id="book_date" name="date" min="{{ today }}" required>
+        <h3 class="small-heading">Choose Facility</h3>
 
-    <br><br>
+        <div class="facility-grid">
 
-    Start:
-    <input type="time" name="start_time" required>
+            <label class="facility-card">
+                <input type="radio" name="facility" value="Badminton Court" required>
+                <img src="{{ url_for('static', filename='images/badmintoncourt.jpg') }}">
+                <h3>Badminton Court</h3>
+            </label>
 
-    <br><br>
+            <label class="facility-card">
+                <input type="radio" name="facility" value="Basketball Court">
+                <img src="{{ url_for('static', filename='images/basketballcourt.jpg') }}">
+                <h3>Basketball Court</h3>
+            </label>
 
-    End:
-    <input type="time" name="end_time" required>
+            <label class="facility-card">
+                <input type="radio" name="facility" value="Futsal Court">
+                <img src="{{ url_for('static', filename='images/futstal.jpg') }}">
+                <h3>Futsal Court</h3>
+            </label>
 
-    <br><br>
+            <label class="facility-card">
+                <input type="radio" name="facility" value="Pickleball Court">
+                <img src="{{ url_for('static', filename='images/pickleball.jpg') }}">
+                <h3>Pickleball</h3>
+            </label>
 
-    <button type="submit">Book</button>
+            <label class="facility-card">
+                <input type="radio" name="facility" value="Ping Pong">
+                <img src="{{ url_for('static', filename='images/pingpong.jpg') }}">
+                <h3>Ping Pong</h3>
+            </label>
 
-</form>
+            <label class="facility-card">
+                <input type="radio" name="facility" value="Swimming Pool">
+                <img src="{{ url_for('static', filename='images/swimmingpool.jpg') }}">
+                <h3>Swimming Pool</h3>
+            </label>
 
-<hr>
+            <label class="facility-card">
+                <input type="radio" name="facility" value="Tennis Court">
+                <img src="{{ url_for('static', filename='images/tennis.jpg') }}">
+                <h3>Tennis Court</h3>
+            </label>
 
-<h2>Create Event</h2>
+        </div>
 
-<form method="POST" action="{{ url_for('create_event') }}">
+        <label>Date:</label>
+        <input type="date" id="book_date" name="date" min="{{ today }}" required>
 
-    Name:
-    <input type="text" name="event_name" required>
+        <label>Start:</label>
+        <input type="time" name="start_time" required>
 
-    <br><br>
+        <label>End:</label>
+        <input type="time" name="end_time" required>
 
-    Facility:
-    <select name="facility" required>
-        {% for facility in facilities %}
-            <option value="{{ facility.name }}">{{ facility.name }}</option>
-        {% endfor %}
-    </select>
+        <button type="submit">Book</button>
 
-    <br><br>
+    </form>
 
-    Date:
-    <input type="date" id="event_date" name="date" min="{{ today }}" required>
+    <!-- CREATE EVENT BOX -->
+    <form class="event-box" method="POST" action="{{ url_for('create_event') }}">
 
-    <br><br>
+        <h2>Create Event</h2>
 
-    Start:
-    <input type="time" name="start_time" required>
+        <label>Name:</label>
+        <input type="text" name="event_name" required>
 
-    <br><br>
+        <label>Facility:</label>
+        <select name="facility" required>
+            <option value="Badminton Court">Badminton Court</option>
+            <option value="Basketball Court">Basketball Court</option>
+            <option value="Futsal Court">Futsal Court</option>
+            <option value="Pickleball Court">Pickleball Court</option>
+            <option value="Ping Pong">Ping Pong</option>
+            <option value="Swimming Pool">Swimming Pool</option>
+            <option value="Tennis Court">Tennis Court</option>
+        </select>
 
-    End:
-    <input type="time" name="end_time" required>
+        <label>Date:</label>
+        <input type="date" id="event_date" name="date" min="{{ today }}" required>
 
-    <br><br>
+        <label>Start:</label>
+        <input type="time" name="start_time" required>
 
-    Level:
-    <select name="level" required>
-        <option>Beginner</option>
-        <option>Intermediate</option>
-        <option>Advanced</option>
-    </select>
+        <label>End:</label>
+        <input type="time" name="end_time" required>
 
-    <br><br>
+        <label>Level:</label>
+        <select name="level" required>
+            <option>Beginner</option>
+            <option>Intermediate</option>
+            <option>Advanced</option>
+        </select>
 
-    <button type="submit">Create Event</button>
+        <button type="submit">Create Event</button>
 
-</form>
+    </form>
 
-<hr>
+</div>
 
-<h2>Events</h2>
+<!-- APPROVED EVENTS SECTION -->
+<section class="approved-events-box">
 
-{% if events %}
-    {% for event in events %}
+    <h2>Approved Events</h2>
 
-    <div style="border:1px solid black; padding:10px; margin-bottom:10px;">
+    {% if events %}
 
-        <b>{{ event.name }}</b><br>
+        <div class="event-list">
 
-        Organizer: {{ event.organizer }}<br>
-        Facility: {{ event.facility }}<br>
-        Date: {{ event.date }}<br>
-        Time: {{ event.start_time }} - {{ event.end_time }}<br>
-        Level: {{ event.level }}<br>
+            {% for event in events %}
 
-        <br>
+            <div class="event-card">
 
-        Members:
+                <h3>{{ event.name }}</h3>
 
-        <ul>
-            {% for m in event.members %}
-                <li>{{ m }}</li>
-            {% else %}
-                <li>No members yet</li>
+                <p><strong>Organizer:</strong> {{ event.organizer }}</p>
+                <p><strong>Facility:</strong> {{ event.facility }}</p>
+                <p><strong>Date:</strong> {{ event.date }}</p>
+                <p><strong>Time:</strong> {{ event.start_time }} - {{ event.end_time }}</p>
+                <p><strong>Level:</strong> {{ event.level }}</p>
+
+                <strong>Members:</strong>
+
+                <ul>
+                    {% for m in event.members %}
+                        <li>{{ m }}</li>
+                    {% else %}
+                        <li>No members yet</li>
+                    {% endfor %}
+                </ul>
+
+                <form method="POST" action="{{ url_for('join_event') }}">
+                    <input type="hidden" name="event_id" value="{{ event.id }}">
+                    <button type="submit" class="join-btn">Join</button>
+                </form>
+
+                <form method="POST" action="{{ url_for('unjoin_event') }}">
+                    <input type="hidden" name="event_id" value="{{ event.id }}">
+                    <button type="submit" class="unjoin-btn">Unjoin</button>
+                </form>
+
+            </div>
+
             {% endfor %}
-        </ul>
 
-        <form method="POST" action="{{ url_for('join_event') }}">
-            <input type="hidden" name="event_id" value="{{ event.id }}">
-            <button type="submit">Join</button>
-        </form>
+        </div>
 
-        <br>
+        <div id="hidden-events" style="display:none;">
 
-        <form method="POST" action="{{ url_for('unjoin_event') }}">
-            <input type="hidden" name="event_id" value="{{ event.id }}">
-            <button type="submit">Unjoin</button>
-        </form>
+            <div class="event-list">
 
-    </div>
+                {% for event in hidden_events %}
 
-    {% endfor %}
-{% else %}
-    <p>No approved events available yet.</p>
-{% endif %}
+                <div class="event-card">
 
-<br>
+                    <h3>{{ event.name }}</h3>
 
-<a href="{{ url_for('dashboard') }}">Back to Dashboard</a> |
-<a href="{{ url_for('home') }}">Home</a>
+                    <p><strong>Organizer:</strong> {{ event.organizer }}</p>
+                    <p><strong>Facility:</strong> {{ event.facility }}</p>
+                    <p><strong>Date:</strong> {{ event.date }}</p>
+                    <p><strong>Time:</strong> {{ event.start_time }} - {{ event.end_time }}</p>
+                    <p><strong>Level:</strong> {{ event.level }}</p>
+
+                </div>
+
+                {% endfor %}
+
+            </div>
+
+        </div>
+
+        {% if has_more_events %}
+        <div class="more-events">
+            <button type="button" onclick="showMoreEvents()">More Events</button>
+        </div>
+        {% endif %}
+
+    {% else %}
+
+        <p>No approved events available yet.</p>
+
+    {% endif %}
+
+</section>
+
+<div class="page-links">
+    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a> |
+    <a href="{{ url_for('home') }}">Home</a>
+</div>
 
 <script>
-    const today = new Date().toISOString().split("T")[0];
+const today = new Date().toISOString().split("T")[0];
 
-    document.getElementById("book_date").setAttribute("min", today);
-    document.getElementById("event_date").setAttribute("min", today);
+document.getElementById("book_date").setAttribute("min", today);
+document.getElementById("event_date").setAttribute("min", today);
+
+function showMoreEvents() {
+    document.getElementById("hidden-events").style.display = "block";
+
+    const btn = document.querySelector(".more-events");
+    if (btn) {
+        btn.style.display = "none";
+    }
+}
 </script>
 
 </body>

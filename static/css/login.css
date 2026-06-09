@@ -1,0 +1,231 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* PAGE */
+
+.login-page {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+
+    background:
+        linear-gradient(rgba(0,0,0,0.45), rgba(0,0,0,0.55)),
+        url("../images/login.png");
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 30px;
+}
+
+/* GLASS CARD */
+
+.login-card {
+    width: 540px;
+    background: rgba(255,255,255,0.13);
+    backdrop-filter: blur(22px);
+    border: 1px solid rgba(255,255,255,0.28);
+    border-radius: 35px;
+    padding: 45px;
+    color: white;
+    box-shadow:
+        0 25px 70px rgba(0,0,0,0.45),
+        inset 0 0 25px rgba(255,255,255,0.08);
+    position: relative;
+    z-index: 3;
+}
+
+/* LOGO */
+
+.logo {
+    text-align: center;
+    font-size: 32px;
+    font-weight: 800;
+    color: white;
+    margin-bottom: 25px;
+    letter-spacing: 2px;
+    font-style: italic;
+}
+
+.logo span {
+    color: #d9ff00;
+}
+
+/* TITLE */
+
+.login-card h1 {
+    text-align: center;
+    font-size: 50px;
+    font-weight: 800;
+    margin-bottom: 10px;
+}
+
+.login-card h1 span {
+    color: #d9ff00;
+}
+
+.subtitle {
+    text-align: center;
+    font-size: 18px;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 35px;
+}
+
+/* FORM */
+
+.login-card label {
+    display: block;
+    margin-top: 20px;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.input-box {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.28);
+    border-radius: 18px;
+    padding: 0 15px;
+}
+
+.input-icon {
+    font-size: 20px;
+    margin-right: 10px;
+}
+
+.input-box input {
+    width: 100%;
+    padding: 16px 5px;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: white;
+    font-size: 15px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.input-box input::placeholder {
+    color: rgba(255,255,255,0.65);
+}
+
+.input-box:focus-within {
+    box-shadow: 0 0 0 3px rgba(217,255,0,0.55);
+    border-color: #d9ff00;
+}
+
+/* BUTTON */
+
+button {
+    width: 100%;
+    margin-top: 32px;
+    padding: 16px;
+    border: none;
+    border-radius: 50px;
+    background: #d9ff00;
+    color: #071b33;
+    font-size: 18px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: white;
+    transform: translateY(-3px);
+    box-shadow: 0 0 25px rgba(217,255,0,0.75);
+}
+
+/* LINKS */
+
+.bottom-text {
+    text-align: center;
+    margin-top: 25px;
+    color: rgba(255,255,255,0.9);
+}
+
+.bottom-text a {
+    color: #d9ff00;
+    text-decoration: none;
+    font-weight: 800;
+}
+
+.home-link {
+    display: block;
+    text-align: center;
+    margin-top: 18px;
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+/* FLOATING SPORTS ICONS */
+
+.floating-ball {
+    position: absolute;
+    font-size: 60px;
+    opacity: 0.18;
+    z-index: 1;
+    animation: float 6s ease-in-out infinite;
+}
+
+.ball-1 {
+    top: 15%;
+    left: 8%;
+}
+
+.ball-2 {
+    bottom: 12%;
+    right: 10%;
+}
+
+.ball-3 {
+    bottom: 18%;
+    left: 13%;
+}
+
+.ball-4 {
+    top: 18%;
+    right: 12%;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-18px);
+    }
+}
+
+/* MOBILE */
+
+@media(max-width:700px) {
+    .login-card {
+        width: 95%;
+        padding: 32px;
+    }
+
+    .login-card h1 {
+        font-size: 38px;
+    }
+
+    .logo {
+        font-size: 26px;
+    }
+}
