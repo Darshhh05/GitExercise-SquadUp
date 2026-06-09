@@ -2,80 +2,174 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - SquadUp</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/register.css') }}">
 </head>
+
 <body>
 
-    <h1>Register</h1>
-    <p>Create a new account</p>
+<div class="register-page">
 
-    <form method="POST" action="{{ url_for('register') }}">
-        
-        <label for="username">Username:</label><br>
-        <input type="text" id="username" name="username" required><br><br>
+    <!-- HERO SECTION -->
 
-        <label for="full_name">Full Name:</label><br>
-        <input type="text" id="full_name" name="full_name" required><br><br>
- 
-        <label for="password">Password:</label><br>
-        <input type="password" id="password" name="password" required><br><br>
+    <div class="register-hero">
 
-        <label for="skill_level">Skill Level:</label><br>
-        <select id="skill_level" name="skill_level" required>
-            <option value="">Select Skill Level</option>
-            <option value="Beginner">Beginner</option>
-            <option value="Intermediate">Intermediate</option>
-            <option value="Advanced">Advanced</option>
-        </select><br><br>
+        <div class="hero-icon icon-one">🏸</div>
+        <div class="hero-icon icon-two">⚽</div>
+        <div class="hero-icon icon-three">🏀</div>
+        <div class="hero-icon icon-four">🏓</div>
 
-        <label>Choose Avatar:</label><br><br>
+        <h1>
+            Create Your <span>SquadUp</span> Profile
+        </h1>
 
-        <input type="radio" name="avatar" value="avatar_1.png" required>
-        <img src="{{ url_for('static', filename='images/avatar_1.png') }}" width="80">
+        <p>
+            Join the game. Build your squad.
+        </p>
 
-        <input type="radio" name="avatar" value="avatar_2.png">
-        <img src="{{ url_for('static', filename='images/avatar_2.png') }}" width="80">
+    </div>
 
-        <input type="radio" name="avatar" value="avatar_3.png">
-        <img src="{{ url_for('static', filename='images/avatar_3.png') }}" width="80">
+    <!-- REGISTER FORM -->
 
-        <input type="radio" name="avatar" value="avatar_4.png">
-        <img src="{{ url_for('static', filename='images/avatar_4.png') }}" width="80">
+    <div class="register-card">
 
-        <br><br>
+        <form method="POST" action="{{ url_for('register') }}">
 
-        <input type="radio" name="avatar" value="avatar_5.png">
-        <img src="{{ url_for('static', filename='images/avatar_5.png') }}" width="80">
+            <label for="username">Username</label>
 
-        <input type="radio" name="avatar" value="avatar_7.png">
-        <img src="{{ url_for('static', filename='images/avatar_7.png') }}" width="80">
+            <input
+                type="text"
+                id="username"
+                name="username"
+                required
+            >
 
-        <input type="radio" name="avatar" value="avatar_12.png">
-        <img src="{{ url_for('static', filename='images/avatar_12.png') }}" width="80">
+            <label for="full_name">Full Name</label>
 
-        <input type="radio" name="avatar" value="avatar_14.png">
-        <img src="{{ url_for('static', filename='images/avatar_14.png') }}" width="80">
+            <input
+                type="text"
+                id="full_name"
+                name="full_name"
+                required
+            >
 
-        <br><br>
+            <label for="password">Password</label>
 
-        <input type="radio" name="avatar" value="avatar_16.png">
-        <img src="{{ url_for('static', filename='images/avatar_16.png') }}" width="80">
+            <input
+                type="password"
+                id="password"
+                name="password"
+                required
+            >
 
-        <br><br>
+            <label for="email">Email</label>
 
-        <button type="submit">Register</button>
+            <input
+                type="email"
+                id="email"
+                name="email"
+                required
+            >
 
-    </form>
+            <label for="skill_level">Skill Level</label>
 
-    <br>
+            <select
+                id="skill_level"
+                name="skill_level"
+                required
+            >
+                <option value="">
+                    Select Skill Level
+                </option>
 
-    <p>Already have an account? 
-        <a href="{{ url_for('login') }}">Login here</a>
-    </p>
+                <option value="Beginner">
+                    Beginner
+                </option>
 
-    <br>
+                <option value="Intermediate">
+                    Intermediate
+                </option>
 
-    <a href="{{ url_for('home') }}">Back to Home</a>
+                <option value="Advanced">
+                    Advanced
+                </option>
+            </select>
+
+            <h3>Choose Your Avatar</h3>
+
+            <div class="avatar-grid">
+
+                <label class="avatar-card">
+                    <input type="radio" name="avatar" value="avatar_1.png" required>
+                    <img src="{{ url_for('static', filename='images/avatar_1.png') }}">
+                </label>
+
+                <label class="avatar-card">
+                    <input type="radio" name="avatar" value="avatar_2.png">
+                    <img src="{{ url_for('static', filename='images/avatar_2.png') }}">
+                </label>
+
+                <label class="avatar-card">
+                    <input type="radio" name="avatar" value="avatar_3.png">
+                    <img src="{{ url_for('static', filename='images/avatar_3.png') }}">
+                </label>
+
+                <label class="avatar-card">
+                    <input type="radio" name="avatar" value="avatar_4.png">
+                    <img src="{{ url_for('static', filename='images/avatar_4.png') }}">
+                </label>
+
+                <label class="avatar-card">
+                    <input type="radio" name="avatar" value="avatar_5.png">
+                    <img src="{{ url_for('static', filename='images/avatar_5.png') }}">
+                </label>
+
+                <label class="avatar-card">
+                    <input type="radio" name="avatar" value="avatar_7.png">
+                    <img src="{{ url_for('static', filename='images/avatar_7.png') }}">
+                </label>
+
+                <label class="avatar-card">
+                    <input type="radio" name="avatar" value="avatar_12.png">
+                    <img src="{{ url_for('static', filename='images/avatar_12.png') }}">
+                </label>
+
+                <label class="avatar-card">
+                    <input type="radio" name="avatar" value="avatar_14.png">
+                    <img src="{{ url_for('static', filename='images/avatar_14.png') }}">
+                </label>
+
+                <label class="avatar-card">
+                    <input type="radio" name="avatar" value="avatar_16.png">
+                    <img src="{{ url_for('static', filename='images/avatar_16.png') }}">
+                </label>
+
+            </div>
+
+            <button type="submit">
+                Create Account
+            </button>
+
+        </form>
+
+        <p class="bottom-text">
+            Already have an account?
+            <a href="{{ url_for('login') }}">
+                Login here
+            </a>
+        </p>
+
+        <a href="{{ url_for('home') }}"
+           class="home-link">
+            Back to Home
+        </a>
+
+    </div>
+
+</div>
 
 </body>
 </html>

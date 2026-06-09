@@ -2,27 +2,167 @@
 <html>
 <head>
     <title>SquadUp Home</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
 </head>
+
 <body>
 
-<nav>
-    <a href="/">🏀 SquadUp</a>
+<nav class="navbar">
+    <div class="logo">🏀 SquadUp</div>
 
-    &nbsp;&nbsp;&nbsp;&nbsp;
-
-    <a href="/">Home</a>
-    <a href="/about">About Us</a>
-    <a href="/register">Register</a>
-
-    &nbsp;&nbsp;&nbsp;&nbsp;
-
-    <a href="/login">👤</a>
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="/about">About Us</a>
+        <a href="/register">Register</a>
+        <a href="/login">Login</a>
+    </div>
 </nav>
 
-<hr>
+<section class="hero">
 
-<h1>Welcome to SquadUp 🏀</h1>
-<p>Your campus sports booking & team finder system</p>
+    <div class="hero-wave"></div>
+
+    <div class="floating-icon icon-1">🏸</div>
+    <div class="floating-icon icon-2">🏀</div>
+    <div class="floating-icon icon-3">⚽</div>
+    <div class="floating-icon icon-4">🏊</div>
+
+    <div class="hero-text">
+        <h1>
+            Find courts and <span class="highlight">players</span> near you
+        </h1>
+
+        <p>
+            Book sports facilities, join events,
+            and connect with players anytime.
+        </p>
+
+        <div class="search-box">
+            🔍
+            <input type="text" placeholder="Search facility, event or sport...">
+        </div>
+
+        <a href="/booking" class="hero-btn">Explore Now</a>
+    </div>
+
+    <div class="hero-image">
+        <img src="{{ url_for('static', filename='images/coverpage.png') }}"
+             alt="SquadUp cover image">
+    </div>
+
+</section>
+
+<section class="stats-section">
+    <div class="stat-box">
+        <h2>500+</h2>
+        <p>Bookings Made</p>
+    </div>
+
+    <div class="stat-box">
+        <h2>120+</h2>
+        <p>Events Created</p>
+    </div>
+
+    <div class="stat-box">
+        <h2>300+</h2>
+        <p>Active Players</p>
+    </div>
+
+    <div class="stat-box">
+        <h2>50+</h2>
+        <p>Facilities</p>
+    </div>
+</section>
+
+<section class="about-section">
+    <div class="about-image">
+        <img src="{{ url_for('static', filename='images/coverpage.png') }}"
+             alt="About SquadUp">
+    </div>
+
+    <div class="about-text">
+        <h2>What is SquadUp?</h2>
+
+        <p>
+            SquadUp helps students book sports facilities,
+            create events, join games, and connect with
+            other players in the community.
+        </p>
+
+        <p>
+            Users can earn achievement badges,
+            receive notifications, and manage
+            their sports activities easily.
+        </p>
+    </div>
+</section>
+
+<section class="features">
+    <h2>Features</h2>
+
+    <div class="feature-container">
+        <div class="feature-card">
+            <h3>🏟 Facility Booking</h3>
+            <p>Book courts and sports facilities easily.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>🎯 Join Events</h3>
+            <p>Join games and meet new teammates.</p>
+        </div>
+
+        <div class="feature-card">
+            <h3>🏅 Badge System</h3>
+            <p>Earn badges through active participation.</p>
+        </div>
+    </div>
+</section>
+
+<section class="badge-showcase">
+    <h2>Achievement Badges</h2>
+
+    <div class="badge-container">
+        <div class="badge-item">
+            <img src="{{ url_for('static', filename='images/active_player.png') }}"
+                 alt="Active Player Badge">
+            <p>Active Player</p>
+        </div>
+
+        <div class="badge-item">
+            <img src="{{ url_for('static', filename='images/team_player.png') }}"
+                 alt="Team Player Badge">
+            <p>Team Player</p>
+        </div>
+
+        <div class="badge-item">
+            <img src="{{ url_for('static', filename='images/team_organizer.png') }}"
+                 alt="Team Organizer Badge">
+            <p>Team Organizer</p>
+        </div>
+
+        <div class="badge-item">
+            <img src="{{ url_for('static', filename='images/squadup_champion.png') }}"
+                 alt="SquadUp Champion Badge">
+            <p>SquadUp Champion</p>
+        </div>
+    </div>
+</section>
+
+<footer class="footer">
+    <h3>🏀 SquadUp</h3>
+    <p>Connect. Play. Compete.</p>
+
+    <div>
+        <a href="/">Home</a>
+        <a href="/about">About Us</a>
+        <a href="/register">Register</a>
+        <a href="/login">Login</a>
+    </div>
+
+    <p>© 2026 SquadUp. All rights reserved.</p>
+</footer>
 
 </body>
 </html>
