@@ -265,6 +265,43 @@ def booking():
         facilities=facilities,
         events=events_with_members
     )
+@app.route("/approved_events")
+def approved_events():
+    if "username" not in session:
+        return redirect(url_for("login"))
+
+    conn = get_db_connection()
+
+    events = conn.execute(
+        "SELECT * FROM events WHERE status='Approved'"
+    ).fetchall()
+
+    events_with_members = []
+
+    for event in events:
+        members = conn.execute(
+            "SELECT username FROM joined_events WHERE event_id = ?",
+            (event["id"],)
+        ).fetchall()
+
+        events_with_members.append({
+            "id": event["id"],
+            "name": event["name"],
+            "organizer": event["organizer"],
+            "facility": event["facility"],
+            "date": event["date"],
+            "start_time": event["start_time"],
+            "end_time": event["end_time"],
+            "level": event["level"],
+            "members": [m["username"] for m in members]
+        })
+
+    conn.close()
+
+    return render_template(
+        "approved_events.html",
+        events=events_with_members
+    )
 
 
 @app.route("/book", methods=["POST"])

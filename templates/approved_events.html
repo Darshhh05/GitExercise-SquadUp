@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>Approved Events</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/booking.css') }}">
+</head>
+<body>
+
+<h1 class="page-title">Approved Events</h1>
+
+<section class="approved-events-box">
+
+```
+<h2>Approved Events</h2>
+
+{% if events %}
+
+<div class="event-list">
+
+    {% for event in events %}
+
+    <div class="event-card">
+
+        <h3>{{ event.name }}</h3>
+
+        <p><strong>Organizer:</strong> {{ event.organizer }}</p>
+        <p><strong>Facility:</strong> {{ event.facility }}</p>
+        <p><strong>Date:</strong> {{ event.date }}</p>
+        <p><strong>Time:</strong> {{ event.start_time }} - {{ event.end_time }}</p>
+        <p><strong>Level:</strong> {{ event.level }}</p>
+        <strong>Members:</strong>
+
+<ul>
+    {% for m in event.members %}
+        <li>{{ m }}</li>
+    {% else %}
+        <li>No members yet</li>
+    {% endfor %}
+</ul>
+
+        <form method="POST" action="{{ url_for('join_event') }}">
+            <input type="hidden" name="event_id" value="{{ event.id }}">
+            <button type="submit" class="join-btn">Join</button>
+        </form>
+
+        <br>
+
+        <form method="POST" action="{{ url_for('unjoin_event') }}">
+            <input type="hidden" name="event_id" value="{{ event.id }}">
+            <button type="submit" class="unjoin-btn">Unjoin</button>
+        </form>
+
+    </div>
+
+    {% endfor %}
+
+</div>
+
+{% else %}
+
+    <p>No approved events available.</p>
+
+{% endif %}
+```
+
+</section>
+
+<div class="page-links">
+    <a href="{{ url_for('booking') }}">Back to Booking</a>
+</div>
+
+</body>
+</html>

@@ -11,7 +11,7 @@ CREATE TABLE IF NOT EXISTS users (
     username TEXT NOT NULL UNIQUE,
     password TEXT NOT NULL,
     skill_level TEXT NOT NULL,
-    avatar TEXT NOT NULL
+    avatar TEXT NOT NULLgit stat
 )
 """)
 

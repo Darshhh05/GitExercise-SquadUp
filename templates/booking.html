@@ -1,176 +1,189 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Booking Page</title>
+    <title>Booking - SquadUp</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/booking.css') }}">
 </head>
+
 <body>
 
-<h1 class="page-title">Booking Page</h1>
+<div class="booking-page">
 
-<div class="booking-layout">
-
-    <!-- BOOK FACILITY BOX -->
-    <form class="booking-box" method="POST" action="{{ url_for('book') }}">
-
-        <h2>Book Facility</h2>
-
-        <h3 class="small-heading">Choose Facility</h3>
-
-        <div class="facility-grid">
-
-            <label class="facility-card">
-                <input type="radio" name="facility" value="Badminton Court" required>
-                <img src="{{ url_for('static', filename='images/badmintoncourt.jpg') }}">
-                <h3>Badminton Court</h3>
-            </label>
-
-            <label class="facility-card">
-                <input type="radio" name="facility" value="Basketball Court">
-                <img src="{{ url_for('static', filename='images/basketballcourt.jpg') }}">
-                <h3>Basketball Court</h3>
-            </label>
-
-            <label class="facility-card">
-                <input type="radio" name="facility" value="Futsal Court">
-                <img src="{{ url_for('static', filename='images/futstal.jpg') }}">
-                <h3>Futsal Court</h3>
-            </label>
-
-            <label class="facility-card">
-                <input type="radio" name="facility" value="Pickleball Court">
-                <img src="{{ url_for('static', filename='images/pickleball.jpg') }}">
-                <h3>Pickleball</h3>
-            </label>
-
-            <label class="facility-card">
-                <input type="radio" name="facility" value="Ping Pong">
-                <img src="{{ url_for('static', filename='images/pingpong.jpg') }}">
-                <h3>Ping Pong</h3>
-            </label>
-
-            <label class="facility-card">
-                <input type="radio" name="facility" value="Swimming Pool">
-                <img src="{{ url_for('static', filename='images/swimmingpool.jpg') }}">
-                <h3>Swimming Pool</h3>
-            </label>
-
-            <label class="facility-card">
-                <input type="radio" name="facility" value="Tennis Court">
-                <img src="{{ url_for('static', filename='images/tennis.jpg') }}">
-                <h3>Tennis Court</h3>
-            </label>
-
+    <div class="booking-header">
+        <div>
+            <h1>Find a Court</h1>
+            <p>Book your favourite sports facility or join approved events.</p>
         </div>
 
-        <label>Date:</label>
-        <input type="date" id="book_date" name="date" min="{{ today }}" required>
+        <div class="booking-nav">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            <a href="{{ url_for('home') }}">Home</a>
+        </div>
+    </div>
 
-        <label>Start:</label>
-        <input type="time" name="start_time" required>
+    <div class="main-booking-grid">
 
-        <label>End:</label>
-        <input type="time" name="end_time" required>
+        <section class="court-list">
 
-        <button type="submit">Book</button>
+            <h2>Choose Facility</h2>
 
-    </form>
+            <div class="court-card" onclick="selectFacility('Badminton Court')">
+                <img src="{{ url_for('static', filename='images/badmintoncourt.jpg') }}">
+                <div>
+                    <h3>Badminton Court</h3>
+                    <p>Fast indoor court for friendly matches and training sessions.</p>
+                    <span>⭐ 4.8</span>
+                </div>
+                <button type="button">Select</button>
+            </div>
 
-    <!-- CREATE EVENT BOX -->
-    <form class="event-box" method="POST" action="{{ url_for('create_event') }}">
+            <div class="court-card" onclick="selectFacility('Basketball Court')">
+                <img src="{{ url_for('static', filename='images/basketballcourt.jpg') }}">
+                <div>
+                    <h3>Basketball Court</h3>
+                    <p>Spacious court for casual games, practice and tournaments.</p>
+                    <span>⭐ 4.7</span>
+                </div>
+                <button type="button">Select</button>
+            </div>
 
-        <h2>Create Event</h2>
+            <div class="court-card" onclick="selectFacility('Futsal Court')">
+                <img src="{{ url_for('static', filename='images/futsal.jpg') }}">
+                <div>
+                    <h3>Futsal Court</h3>
+                    <p>Perfect court for team matches and energetic indoor football.</p>
+                    <span>⭐ 4.6</span>
+                </div>
+                <button type="button">Select</button>
+            </div>
 
-        <label>Name:</label>
-        <input type="text" name="event_name" required>
+            <div class="court-card" onclick="selectFacility('Pickleball Court')">
+                <img src="{{ url_for('static', filename='images/pickleball.jpg') }}">
+                <div>
+                    <h3>Pickleball Court</h3>
+                    <p>Fun court for quick rallies, beginner games and group play.</p>
+                    <span>⭐ 4.5</span>
+                </div>
+                <button type="button">Select</button>
+            </div>
 
-        <label>Facility:</label>
-        <select name="facility" required>
-            <option value="Badminton Court">Badminton Court</option>
-            <option value="Basketball Court">Basketball Court</option>
-            <option value="Futsal Court">Futsal Court</option>
-            <option value="Pickleball Court">Pickleball Court</option>
-            <option value="Ping Pong">Ping Pong</option>
-            <option value="Swimming Pool">Swimming Pool</option>
-            <option value="Tennis Court">Tennis Court</option>
-        </select>
+            <div class="court-card" onclick="selectFacility('Ping Pong')">
+                <img src="{{ url_for('static', filename='images/pingpong.jpg') }}">
+                <div>
+                    <h3>Ping Pong</h3>
+                    <p>Indoor table tennis space for fast-paced friendly challenges.</p>
+                    <span>⭐ 4.4</span>
+                </div>
+                <button type="button">Select</button>
+            </div>
 
-        <label>Date:</label>
-        <input type="date" id="event_date" name="date" min="{{ today }}" required>
+            <div class="court-card" onclick="selectFacility('Swimming Pool')">
+                <img src="{{ url_for('static', filename='images/swimmingpool.jpg') }}">
+                <div>
+                    <h3>Swimming Pool</h3>
+                    <p>Clean pool facility for training, leisure and wellness sessions.</p>
+                    <span>⭐ 4.6</span>
+                </div>
+                <button type="button">Select</button>
+            </div>
 
-        <label>Start:</label>
-        <input type="time" name="start_time" required>
+            <div class="court-card" onclick="selectFacility('Tennis Court')">
+                <img src="{{ url_for('static', filename='images/tennis.jpg') }}">
+                <div>
+                    <h3>Tennis Court</h3>
+                    <p>Outdoor tennis court for rallies, training and weekend games.</p>
+                    <span>⭐ 4.5</span>
+                </div>
+                <button type="button">Select</button>
+            </div>
 
-        <label>End:</label>
-        <input type="time" name="end_time" required>
+        </section>
 
-        <label>Level:</label>
-        <select name="level" required>
-            <option>Beginner</option>
-            <option>Intermediate</option>
-            <option>Advanced</option>
-        </select>
+        <section class="side-panel">
 
-        <button type="submit">Create Event</button>
+            <form class="booking-form" method="POST" action="{{ url_for('book') }}">
 
-    </form>
+                <h2>Book Selected Facility</h2>
+
+                <label>Selected Facility</label>
+                <input type="text" id="selected_facility" name="facility" readonly required placeholder="Click a facility card">
+
+                <label>Date</label>
+                <input type="date" id="book_date" name="date" min="{{ today }}" required>
+
+                <label>Start Time</label>
+                <input type="time" name="start_time" required>
+
+                <label>End Time</label>
+                <input type="time" name="end_time" required>
+
+                <button type="submit">Book Now</button>
+
+            </form>
+
+            <form class="event-form" method="POST" action="{{ url_for('create_event') }}">
+
+                <h2>Create Event</h2>
+
+                <label>Event Name</label>
+                <input type="text" name="event_name" required>
+
+                <label>Facility</label>
+                <select name="facility" required>
+                    <option value="Badminton Court">Badminton Court</option>
+                    <option value="Basketball Court">Basketball Court</option>
+                    <option value="Futsal Court">Futsal Court</option>
+                    <option value="Pickleball Court">Pickleball Court</option>
+                    <option value="Ping Pong">Ping Pong</option>
+                    <option value="Swimming Pool">Swimming Pool</option>
+                    <option value="Tennis Court">Tennis Court</option>
+                </select>
+
+                <label>Date</label>
+                <input type="date" id="event_date" name="date" min="{{ today }}" required>
+
+                <label>Start Time</label>
+                <input type="time" name="start_time" required>
+
+                <label>End Time</label>
+                <input type="time" name="end_time" required>
+
+                <label>Level</label>
+                <select name="level" required>
+                    <option>Beginner</option>
+                    <option>Intermediate</option>
+                    <option>Advanced</option>
+                </select>
+
+                <button type="submit">Create Event</button>
+
+            </form>
+
+            <button type="button" class="view-events-btn" onclick="openModal()">
+                View Approved Events
+            </button>
+
+        </section>
+
+    </div>
 
 </div>
 
-<!-- APPROVED EVENTS SECTION -->
-<section class="approved-events-box">
+<!-- APPROVED EVENTS MODAL -->
 
-    <h2>Approved Events</h2>
+<div id="eventsModal" class="modal">
 
-    {% if events %}
+    <div class="modal-content">
 
-        <div class="event-list">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
 
-            {% for event in events %}
+        <h2>Approved Events</h2>
 
-            <div class="event-card">
+        {% if events %}
+            <div class="approved-grid">
 
-                <h3>{{ event.name }}</h3>
-
-                <p><strong>Organizer:</strong> {{ event.organizer }}</p>
-                <p><strong>Facility:</strong> {{ event.facility }}</p>
-                <p><strong>Date:</strong> {{ event.date }}</p>
-                <p><strong>Time:</strong> {{ event.start_time }} - {{ event.end_time }}</p>
-                <p><strong>Level:</strong> {{ event.level }}</p>
-
-                <strong>Members:</strong>
-
-                <ul>
-                    {% for m in event.members %}
-                        <li>{{ m }}</li>
-                    {% else %}
-                        <li>No members yet</li>
-                    {% endfor %}
-                </ul>
-
-                <form method="POST" action="{{ url_for('join_event') }}">
-                    <input type="hidden" name="event_id" value="{{ event.id }}">
-                    <button type="submit" class="join-btn">Join</button>
-                </form>
-
-                <form method="POST" action="{{ url_for('unjoin_event') }}">
-                    <input type="hidden" name="event_id" value="{{ event.id }}">
-                    <button type="submit" class="unjoin-btn">Unjoin</button>
-                </form>
-
-            </div>
-
-            {% endfor %}
-
-        </div>
-
-        <div id="hidden-events" style="display:none;">
-
-            <div class="event-list">
-
-                {% for event in hidden_events %}
-
-                <div class="event-card">
+                {% for event in events %}
+                <div class="approved-card">
 
                     <h3>{{ event.name }}</h3>
 
@@ -180,31 +193,41 @@
                     <p><strong>Time:</strong> {{ event.start_time }} - {{ event.end_time }}</p>
                     <p><strong>Level:</strong> {{ event.level }}</p>
 
-                </div>
+                    <div class="members-box">
+                        <strong>Members:</strong>
+                        <ul>
+                            {% for m in event.members %}
+                                <li>{{ m }}</li>
+                            {% else %}
+                                <li>No members yet</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
 
+                    <div class="event-actions">
+                        <form method="POST" action="{{ url_for('join_event') }}">
+                            <input type="hidden" name="event_id" value="{{ event.id }}">
+                            <button type="submit">Join</button>
+                        </form>
+
+                        <form method="POST" action="{{ url_for('unjoin_event') }}">
+                            <input type="hidden" name="event_id" value="{{ event.id }}">
+                            <button type="submit" class="unjoin-btn">Unjoin</button>
+                        </form>
+                    </div>
+
+                </div>
                 {% endfor %}
 
             </div>
-
-        </div>
-
-        {% if has_more_events %}
-        <div class="more-events">
-            <button type="button" onclick="showMoreEvents()">More Events</button>
-        </div>
+        {% else %}
+            <div class="empty-events">
+                No approved events available yet.
+            </div>
         {% endif %}
 
-    {% else %}
+    </div>
 
-        <p>No approved events available yet.</p>
-
-    {% endif %}
-
-</section>
-
-<div class="page-links">
-    <a href="{{ url_for('dashboard') }}">Back to Dashboard</a> |
-    <a href="{{ url_for('home') }}">Home</a>
 </div>
 
 <script>
@@ -213,13 +236,21 @@ const today = new Date().toISOString().split("T")[0];
 document.getElementById("book_date").setAttribute("min", today);
 document.getElementById("event_date").setAttribute("min", today);
 
-function showMoreEvents() {
-    document.getElementById("hidden-events").style.display = "block";
+function selectFacility(facilityName) {
+    document.getElementById("selected_facility").value = facilityName;
 
-    const btn = document.querySelector(".more-events");
-    if (btn) {
-        btn.style.display = "none";
-    }
+    const cards = document.querySelectorAll(".court-card");
+    cards.forEach(card => card.classList.remove("selected"));
+
+    event.currentTarget.classList.add("selected");
+}
+
+function openModal() {
+    document.getElementById("eventsModal").style.display = "flex";
+}
+
+function closeModal() {
+    document.getElementById("eventsModal").style.display = "none";
 }
 </script>
 
