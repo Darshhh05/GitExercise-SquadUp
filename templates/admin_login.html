@@ -3,24 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin Access - SquadUp</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_login.css') }}">
 </head>
+
 <body>
 
-    <h1>Admin Access</h1>
+<div class="admin-login-page">
 
-    <form method="POST" action="{{ url_for('admin_login') }}">
-        <label>Username:</label><br>
-        <input type="text" name="username" placeholder="Enter username" required><br><br>
+    <div class="admin-card">
 
-        <label>Password:</label><br>
-        <input type="password" name="password" placeholder="Enter password" required><br><br>
+        <h1>Squad<span>Up</span></h1>
+        <h2>Admin Access</h2>
+        <p>Control and manage the SquadUp system</p>
 
-        <button type="submit">Login</button>
-    </form>
+        <form method="POST" action="{{ url_for('admin_login') }}">
 
-    <br>
+            <label>Username</label>
+            <input type="text" name="username" placeholder="Enter username" required>
 
-    <a href="{{ url_for('home') }}">Back</a>
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Enter password" required>
+
+            <button type="submit">Login</button>
+
+        </form>
+
+        <a href="{{ url_for('home') }}" class="back-link">← Back to Home</a>
+
+    </div>
+
+</div>
 
 </body>
 </html>

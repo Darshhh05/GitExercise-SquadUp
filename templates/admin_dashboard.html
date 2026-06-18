@@ -1,152 +1,517 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
+
+    <meta charset="UTF-8">
+
     <title>Admin Dashboard - SquadUp</title>
+
+    <link rel="stylesheet"
+    href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
+
 </head>
+
 <body>
 
-    <h1>Admin Dashboard</h1>
+<div class="admin-page">
 
-    <a href="{{ url_for('admin_logout') }}">Admin Logout</a>
+    <!-- HEADER -->
 
-    <hr>
+    <div class="admin-header">
 
-    <h2>Manage Facilities</h2>
+        <div>
 
-    <form method="POST" action="{{ url_for('add_facility') }}">
-        <input type="text" name="facility_name" placeholder="Enter facility name" required>
-        <button type="submit">Add Facility</button>
-    </form>
+            <h1>Squad<span>Up</span> Admin</h1>
 
-    <br>
+            <p>Manage users, bookings, events and announcements.</p>
 
-    <table border="1" cellpadding="10">
-        <tr>
-            <th>Facility ID</th>
-            <th>Facility Name</th>
-            <th>Action</th>
-        </tr>
+        </div>
 
-        {% for facility in facilities %}
-        <tr>
-            <td>{{ facility.id }}</td>
-            <td>{{ facility.name }}</td>
-            <td>
-                <a href="{{ url_for('delete_facility', facility_id=facility.id) }}">Remove</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+        <a href="{{ url_for('admin_logout') }}"
+        class="logout-btn">
 
-    <hr>
+            Admin Logout
 
-    <h2>Post Announcement</h2>
+        </a>
 
-    <form method="POST" action="{{ url_for('post_announcement') }}">
-        <textarea name="message" rows="4" cols="50" placeholder="Write announcement here" required></textarea><br><br>
-        <button type="submit">Post Announcement</button>
-    </form>
+    </div>
 
-    <h3>Current Announcements</h3>
 
-    {% for announcement in announcements %}
-        <p>
-            {{ announcement.message }}
-            <a href="{{ url_for('delete_announcement', announcement_id=announcement.id) }}">Delete</a>
-        </p>
-    {% endfor %}
+    <!-- QUICK ACTION BUTTONS -->
 
-    <hr>
+    <div class="quick-actions">
 
-    <h2>Registered Users</h2>
+        <button onclick="openModal('usersModal')">
 
-    <table border="1" cellpadding="10">
-        <tr>
-            <th>User ID</th>
-            <th>Full Name</th>
-            <th>Username</th>
-            <th>Skill Level</th>
-            <th>Avatar</th>
-        </tr>
+            Registered Users
 
-        {% for user in users %}
-        <tr>
-            <td>{{ user.id }}</td>
-            <td>{{ user.full_name }}</td>
-            <td>{{ user.username }}</td>
-            <td>{{ user.skill_level }}</td>
-         <td>
-                <img src="{{ url_for('static', filename='images/' + user.avatar) }}" width="60">
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+        </button>
 
-    <hr>
+        <button onclick="openModal('bookingsModal')">
 
-    <h2>All Facility Bookings</h2>
+            Facility Bookings
 
-    <table border="1" cellpadding="10">
-        <tr>
-            <th>Booking ID</th>
-            <th>Username</th>
-            <th>Facility</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
+        </button>
 
-        {% for booking in bookings %}
-        <tr>
-            <td>{{ booking.id }}</td>
-            <td>{{ booking.username }}</td>
-            <td>{{ booking.facility }}</td>
-            <td>{{ booking.date }}</td>
-            <td>{{ booking.start_time }} - {{ booking.end_time }}</td>
-            <td>{{ booking.status }}</td>
-            <td>
-                <a href="{{ url_for('approve_booking', booking_id=booking.id) }}">Approve</a> |
-                <a href="{{ url_for('reject_booking', booking_id=booking.id) }}">Reject</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+        <button onclick="openModal('eventsModal')">
 
-    <hr>
+            Created Events
 
-    <h2>All Created Events</h2>
+        </button>
 
-    <table border="1" cellpadding="10">
-        <tr>
-            <th>Event ID</th>
-            <th>Event Name</th>
-            <th>Created By</th>
-            <th>Facility</th>
-            <th>Date</th>
-            <th>Time</th>
-            <th>Level</th>
-            <th>Status</th>
-            <th>Action</th>
-        </tr>
+    </div>
 
-        {% for event in events %}
-        <tr>
-            <td>{{ event.id }}</td>
-            <td>{{ event.name }}</td>
-            <td>{{ event.created_by }}</td>
-            <td>{{ event.facility }}</td>
-            <td>{{ event.date }}</td>
-            <td>{{ event.start_time }} - {{ event.end_time }}</td>
-            <td>{{ event.level }}</td>
-            <td>{{ event.status }}</td>
-            <td>
-                <a href="{{ url_for('approve_event', event_id=event.id) }}">Approve</a> |
-                <a href="{{ url_for('reject_event', event_id=event.id) }}">Reject</a>
-            </td>
-        </tr>
-        {% endfor %}
-    </table>
+
+    <!-- MAIN CARDS -->
+
+    <div class="admin-grid">
+
+
+        <!-- WEBSITE OVERVIEW -->
+
+        <section class="admin-card">
+
+            <h2>Website Overview</h2>
+
+            <div class="overview-grid">
+
+                <div class="overview-box">
+
+                    <h3>{{ users|length }}</h3>
+
+                    <p>Registered Users</p>
+
+                </div>
+
+                <div class="overview-box">
+
+                    <h3>{{ bookings|length }}</h3>
+
+                    <p>Total Bookings</p>
+
+                </div>
+
+                <div class="overview-box">
+
+                    <h3>{{ events|length }}</h3>
+
+                    <p>Created Events</p>
+
+                </div>
+
+                <div class="overview-box">
+
+                    <h3>{{ announcements|length }}</h3>
+
+                    <p>Announcements</p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- POST ANNOUNCEMENT -->
+
+        <section class="admin-card">
+
+            <h2>Post Announcement</h2>
+
+            <form method="POST"
+            action="{{ url_for('post_announcement') }}">
+
+                <textarea
+
+                name="message"
+
+                placeholder="Write announcement here"
+
+                required>
+
+                </textarea>
+
+                <button type="submit">
+
+                    Post Announcement
+
+                </button>
+
+            </form>
+
+
+
+            <h3>Current Announcements</h3>
+
+
+
+            <div class="mini-list">
+
+                {% for announcement in announcements %}
+
+                <div class="mini-item">
+
+                    <span>
+
+                        {{ announcement.message }}
+
+                    </span>
+
+                    <a href="{{ url_for('delete_announcement', announcement_id=announcement.id) }}">
+
+                        Delete
+
+                    </a>
+
+                </div>
+
+                {% else %}
+
+                <p>
+
+                    No announcements yet.
+
+                </p>
+
+                {% endfor %}
+
+            </div>
+
+        </section>
+
+    </div>
+
+</div>
+
+
+<!-- REGISTERED USERS MODAL -->
+
+<div id="usersModal" class="modal">
+
+    <div class="modal-box">
+
+        <span class="close-btn"
+
+        onclick="closeModal('usersModal')">
+
+            &times;
+
+        </span>
+
+        <h2>Registered Users</h2>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <tr>
+
+                    <th>User ID</th>
+
+                    <th>Full Name</th>
+
+                    <th>Username</th>
+
+                    <th>Skill Level</th>
+
+                    <th>Avatar</th>
+
+                </tr>
+
+                {% for user in users %}
+
+                <tr>
+
+                    <td>{{ user.id }}</td>
+
+                    <td>{{ user.full_name }}</td>
+
+                    <td>{{ user.username }}</td>
+
+                    <td>{{ user.skill_level }}</td>
+
+                    <td>
+
+                        <img
+
+                        src="{{ url_for('static', filename='images/' + user.avatar) }}"
+
+                        class="table-avatar">
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- FACILITY BOOKINGS MODAL -->
+
+<div id="bookingsModal" class="modal">
+
+    <div class="modal-box">
+
+        <span class="close-btn"
+
+        onclick="closeModal('bookingsModal')">
+
+            &times;
+
+        </span>
+
+        <h2>Facility Bookings</h2>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Username</th>
+
+                    <th>Facility</th>
+
+                    <th>Date</th>
+
+                    <th>Time</th>
+
+                    <th>Status</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+                {% for booking in bookings %}
+
+                <tr>
+
+                    <td>{{ booking.id }}</td>
+
+                    <td>{{ booking.username }}</td>
+
+                    <td>{{ booking.facility }}</td>
+
+                    <td>{{ booking.date }}</td>
+
+                    <td>
+
+                        {{ booking.start_time }}
+
+                        -
+
+                        {{ booking.end_time }}
+
+                    </td>
+
+                    <td>
+
+                        <span class="status">
+
+                            {{ booking.status }}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <a
+
+                        class="approve"
+
+                        href="{{ url_for('approve_booking', booking_id=booking.id) }}">
+
+                            Approve
+
+                        </a>
+
+                        <a
+
+                        class="reject"
+
+                        href="{{ url_for('reject_booking', booking_id=booking.id) }}">
+
+                            Reject
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- EVENTS MODAL -->
+
+<div id="eventsModal" class="modal">
+
+    <div class="modal-box">
+
+        <span class="close-btn"
+
+        onclick="closeModal('eventsModal')">
+
+            &times;
+
+        </span>
+
+        <h2>Created Events</h2>
+
+        <div class="table-wrap">
+
+            <table>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Name</th>
+
+                    <th>Created By</th>
+
+                    <th>Facility</th>
+
+                    <th>Date</th>
+
+                    <th>Time</th>
+
+                    <th>Level</th>
+
+                    <th>Status</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+                {% for event in events %}
+
+                <tr>
+
+                    <td>{{ event.id }}</td>
+
+                    <td>{{ event.name }}</td>
+
+                    <td>{{ event.created_by }}</td>
+
+                    <td>{{ event.facility }}</td>
+
+                    <td>{{ event.date }}</td>
+
+                    <td>
+
+                        {{ event.start_time }}
+
+                        -
+
+                        {{ event.end_time }}
+
+                    </td>
+
+                    <td>{{ event.level }}</td>
+
+                    <td>
+
+                        <span class="status">
+
+                            {{ event.status }}
+
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <a
+
+                        class="approve"
+
+                        href="{{ url_for('approve_event', event_id=event.id) }}">
+
+                            Approve
+
+                        </a>
+
+                        <a
+
+                        class="reject"
+
+                        href="{{ url_for('reject_event', event_id=event.id) }}">
+
+                            Reject
+
+                        </a>
+
+                    </td>
+
+                </tr>
+
+                {% endfor %}
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+function openModal(id){
+
+document.getElementById(id).style.display='flex';
+
+}
+
+function closeModal(id){
+
+document.getElementById(id).style.display='none';
+
+}
+
+window.onclick=function(e){
+
+const modals=document.querySelectorAll('.modal');
+
+modals.forEach(modal=>{
+
+if(e.target===modal){
+
+modal.style.display='none';
+
+}
+
+});
+
+}
+
+</script>
 
 </body>
+
 </html>

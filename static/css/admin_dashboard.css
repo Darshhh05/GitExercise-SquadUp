@@ -1,0 +1,255 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800;900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background:
+        radial-gradient(circle at top left, rgba(217,255,0,0.18), transparent 24%),
+        radial-gradient(circle at bottom right, rgba(37,99,235,0.35), transparent 32%),
+        linear-gradient(135deg, #031427, #071b33, #082f6b, #0f4fd6);
+    color: white;
+    min-height: 100vh;
+}
+
+.admin-page {
+    padding: 45px 7%;
+}
+
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 35px;
+}
+
+.admin-header h1 {
+    font-size: 56px;
+    font-weight: 900;
+    font-style: italic;
+    text-shadow: 0 0 25px rgba(255,255,255,0.25);
+}
+
+.admin-header h1 span {
+    color: #d9ff00;
+    text-shadow: 0 0 25px rgba(217,255,0,0.8);
+}
+
+.admin-header p {
+    color: rgba(255,255,255,0.75);
+    font-size: 18px;
+}
+
+.logout-btn,
+.quick-actions button,
+.admin-card button {
+    background: #d9ff00;
+    color: #071b33;
+    border: none;
+    text-decoration: none;
+    padding: 14px 26px;
+    border-radius: 35px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+.logout-btn:hover,
+.quick-actions button:hover,
+.admin-card button:hover {
+    background: white;
+    box-shadow: 0 0 25px rgba(217,255,0,0.6);
+}
+
+.quick-actions {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 35px;
+}
+
+.quick-actions button {
+    font-size: 16px;
+}
+
+.admin-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 28px;
+}
+
+.admin-card {
+    background: rgba(255,255,255,0.10);
+    backdrop-filter: blur(22px);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 32px;
+    padding: 30px;
+    box-shadow: 0 25px 70px rgba(0,0,0,0.35);
+}
+
+.admin-card h2 {
+    color: #d9ff00;
+    font-size: 30px;
+    margin-bottom: 22px;
+}
+
+.admin-card h3 {
+    margin-top: 28px;
+    margin-bottom: 15px;
+}
+
+.inline-form {
+    display: flex;
+    gap: 12px;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 15px;
+    border-radius: 18px;
+    border: none;
+    outline: none;
+    font-family: 'Poppins', sans-serif;
+}
+
+textarea {
+    height: 120px;
+    resize: none;
+    margin-bottom: 15px;
+}
+
+.mini-list {
+    margin-top: 20px;
+}
+
+.mini-item {
+    background: rgba(255,255,255,0.12);
+    padding: 14px;
+    border-radius: 18px;
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.mini-item a {
+    color: #d9ff00;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+/* MODAL */
+
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+    z-index: 999;
+}
+
+.modal-box {
+    width: 90%;
+    max-height: 85vh;
+    overflow-y: auto;
+    background: #071b33;
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 32px;
+    padding: 35px;
+    position: relative;
+    box-shadow: 0 25px 80px rgba(0,0,0,0.55);
+}
+
+.modal-box h2 {
+    color: #d9ff00;
+    font-size: 34px;
+    margin-bottom: 25px;
+}
+
+.close-btn {
+    position: absolute;
+    top: 18px;
+    right: 30px;
+    font-size: 40px;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #d9ff00;
+}
+
+.table-wrap {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    color: #071b33;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+th {
+    background: #d9ff00;
+    color: #071b33;
+    padding: 16px;
+    text-align: left;
+}
+
+td {
+    padding: 15px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.table-avatar {
+    width: 65px;
+    height: 65px;
+    object-fit: cover;
+    border-radius: 15px;
+}
+
+.status {
+    background: #eef2f7;
+    padding: 7px 14px;
+    border-radius: 20px;
+    font-weight: 800;
+}
+
+.approve {
+    color: #16a34a;
+    font-weight: 900;
+    margin-right: 10px;
+    text-decoration: none;
+}
+
+.reject {
+    color: #ef4444;
+    font-weight: 900;
+    text-decoration: none;
+}
+
+@media(max-width: 900px) {
+    .admin-header,
+    .admin-grid,
+    .quick-actions {
+        flex-direction: column;
+        display: flex;
+        align-items: flex-start;
+    }
+
+    .admin-header h1 {
+        font-size: 40px;
+    }
+
+    .inline-form {
+        flex-direction: column;
+    }
+}
