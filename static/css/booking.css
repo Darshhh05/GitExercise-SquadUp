@@ -408,3 +408,78 @@ select:focus {
         height: 220px;
     }
 }
+/* AVAILABILITY SLOTS */
+
+.availability-box {
+    margin-top: 20px;
+    padding: 18px;
+    border-radius: 22px;
+    background: rgba(255,255,255,0.10);
+    border: 1px solid rgba(255,255,255,0.18);
+}
+
+.availability-box h3 {
+    color: #d9ff00;
+    font-style: italic;
+    margin-bottom: 14px;
+}
+
+#availabilitySlots {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.slot {
+    padding: 12px;
+    border: none;
+    border-radius: 18px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.slot.available {
+    background: #d9ff00;
+    color: #071b33;
+}
+
+.slot.unavailable {
+    background: rgba(255,255,255,0.20);
+    color: rgba(255,255,255,0.55);
+    cursor: not-allowed;
+}
+
+/* EVENT CAPACITY */
+
+.capacity-box {
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 16px;
+    background: rgba(255,255,255,0.10);
+}
+
+.capacity-box span {
+    color: #d9ff00;
+    font-weight: 800;
+}
+
+.capacity-bar {
+    width: 100%;
+    height: 9px;
+    margin-top: 10px;
+    border-radius: 20px;
+    background: rgba(255,255,255,0.18);
+    overflow: hidden;
+}
+
+.capacity-bar div {
+    height: 100%;
+    background: #d9ff00;
+    border-radius: 20px;
+}
+
+.full-btn {
+    background: rgba(255,255,255,0.22) !important;
+    color: rgba(255,255,255,0.55) !important;
+    cursor: not-allowed !important;
+}

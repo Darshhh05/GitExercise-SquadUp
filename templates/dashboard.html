@@ -25,16 +25,32 @@
         </div>
     </div>
 
-    <div class="announcement-ticker">
-        <span>📢 Announcements:</span>
+    <div class="announcement-slider">
 
-        {% if announcements %}
-            {% for announcement in announcements %}
-                {{ announcement.message }} &nbsp; • &nbsp;
-            {% endfor %}
-        {% else %}
-            No announcements yet.
-        {% endif %}
+        <div class="announcement-icon">📢</div>
+
+        <div class="announcement-track">
+            {% if announcements %}
+                {% for announcement in announcements %}
+                    <div class="announcement-slide">
+                        {{ announcement.message }}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="announcement-slide active">
+                    No announcements yet.
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="announcement-dots">
+            {% if announcements %}
+                {% for announcement in announcements %}
+                    <span class="dot" onclick="showSlide({{ loop.index0 }})"></span>
+                {% endfor %}
+            {% endif %}
+        </div>
+
     </div>
 
     <div class="main-grid">
@@ -55,6 +71,10 @@
             <div class="rank-badge">
                 {{ user.skill_level }} Player
             </div>
+
+            <a href="{{ url_for('edit_profile') }}" class="edit-profile-btn">
+                Edit Profile
+            </a>
         </section>
 
         <section class="badge-wall">
@@ -107,35 +127,33 @@
     <section class="progress-section">
 
         <h2>Unlock Progress</h2>
+
         <p>🏸 Active Player: {{ booking_count }}/20 bookings</p>
+        <div class="progress-bar">
+            <div style="width: {{ [booking_count * 5, 100] | min }}%"></div>
+        </div>
 
-<div class="progress-bar">
-    <div style="width: {{ [booking_count*5,100]|min }}%"></div>
-</div>
+        <p>🤝 Team Player: {{ joined_count }}/20 joined events</p>
+        <div class="progress-bar">
+            <div style="width: {{ [joined_count * 5, 100] | min }}%"></div>
+        </div>
 
-
-<p>🤝 Team Player: {{ joined_count }}/20 joined events</p>
-
-<div class="progress-bar">
-    <div style="width: {{ [joined_count*5,100]|min }}%"></div>
-</div>
-
-
-<p>🏆 Team Organizer: {{ created_count }}/10 created events</p>
-
-<div class="progress-bar">
-    <div style="width: {{ [created_count*10,100]|min }}%"></div>
-</div>
+        <p>🏆 Team Organizer: {{ created_count }}/10 created events</p>
+        <div class="progress-bar">
+            <div style="width: {{ [created_count * 10, 100] | min }}%"></div>
+        </div>
 
     </section>
 
     <div class="booking-grid">
 
+        <!-- UPCOMING BOOKINGS -->
         <section class="match-panel">
             <h2>🔥 Upcoming Bookings</h2>
 
             {% if due_bookings %}
-                {% for booking in due_bookings %}
+
+                {% for booking in due_bookings[:3] %}
                     <div class="match-card">
 
                         <div class="calendar-box">
@@ -147,7 +165,6 @@
                             <p>{{ booking.start_time }} - {{ booking.end_time }}</p>
                             <span>{{ booking.status }}</span>
                             <br>
-
                             <a href="{{ url_for('delete_booking', booking_id=booking.id) }}">
                                 Delete
                             </a>
@@ -155,16 +172,26 @@
 
                     </div>
                 {% endfor %}
+
+                {% if due_bookings|length > 3 %}
+                    <button class="see-more-btn" onclick="openBookingModal('upcomingModal')">
+                        See More
+                    </button>
+                {% endif %}
+
             {% else %}
                 <p class="empty">No upcoming bookings yet.</p>
             {% endif %}
         </section>
 
+
+        <!-- PAST BOOKINGS -->
         <section class="match-panel">
             <h2>🕒 Past Bookings</h2>
 
             {% if past_bookings %}
-                {% for booking in past_bookings %}
+
+                {% for booking in past_bookings[:3] %}
                     <div class="match-card">
 
                         <div class="calendar-box">
@@ -179,6 +206,13 @@
 
                     </div>
                 {% endfor %}
+
+                {% if past_bookings|length > 3 %}
+                    <button class="see-more-btn" onclick="openBookingModal('pastModal')">
+                        See More
+                    </button>
+                {% endif %}
+
             {% else %}
                 <p class="empty">No past bookings yet.</p>
             {% endif %}
@@ -187,6 +221,128 @@
     </div>
 
 </div>
+
+<!-- UPCOMING MODAL -->
+<div id="upcomingModal" class="booking-modal">
+    <div class="booking-modal-box">
+
+        <span class="booking-close" onclick="closeBookingModal('upcomingModal')">&times;</span>
+
+        <h2>🔥 More Upcoming Bookings</h2>
+
+        {% if due_bookings|length > 3 %}
+            {% for booking in due_bookings[3:] %}
+                <div class="match-card modal-card">
+
+                    <div class="calendar-box">
+                        {{ booking.date }}
+                    </div>
+
+                    <div>
+                        <h3>{{ booking.facility }}</h3>
+                        <p>{{ booking.start_time }} - {{ booking.end_time }}</p>
+                        <span>{{ booking.status }}</span>
+                        <br>
+                        <a href="{{ url_for('delete_booking', booking_id=booking.id) }}">
+                            Delete
+                        </a>
+                    </div>
+
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty">No extra upcoming bookings.</p>
+        {% endif %}
+
+    </div>
+</div>
+
+
+<!-- PAST MODAL -->
+<div id="pastModal" class="booking-modal">
+    <div class="booking-modal-box">
+
+        <span class="booking-close" onclick="closeBookingModal('pastModal')">&times;</span>
+
+        <h2>🕒 More Past Bookings</h2>
+
+        {% if past_bookings|length > 3 %}
+            {% for booking in past_bookings[3:] %}
+                <div class="match-card modal-card">
+
+                    <div class="calendar-box">
+                        {{ booking.date }}
+                    </div>
+
+                    <div>
+                        <h3>{{ booking.facility }}</h3>
+                        <p>{{ booking.start_time }} - {{ booking.end_time }}</p>
+                        <span>{{ booking.status }}</span>
+                    </div>
+
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty">No extra past bookings.</p>
+        {% endif %}
+
+    </div>
+</div>
+
+<script>
+let currentSlide = 0;
+
+const slides = document.querySelectorAll(".announcement-slide");
+const dots = document.querySelectorAll(".dot");
+
+function showSlide(index) {
+    slides.forEach(slide => slide.classList.remove("active"));
+    dots.forEach(dot => dot.classList.remove("active"));
+
+    currentSlide = index;
+
+    if (slides[currentSlide]) {
+        slides[currentSlide].classList.add("active");
+    }
+
+    if (dots[currentSlide]) {
+        dots[currentSlide].classList.add("active");
+    }
+}
+
+function nextSlide() {
+    if (slides.length === 0) return;
+
+    currentSlide++;
+
+    if (currentSlide >= slides.length) {
+        currentSlide = 0;
+    }
+
+    showSlide(currentSlide);
+}
+
+function openBookingModal(id) {
+    document.getElementById(id).classList.add("active");
+}
+
+function closeBookingModal(id) {
+    document.getElementById(id).classList.remove("active");
+}
+
+window.onclick = function(event) {
+    const modals = document.querySelectorAll(".booking-modal");
+
+    modals.forEach(function(modal) {
+        if (event.target === modal) {
+            modal.classList.remove("active");
+        }
+    });
+}
+
+showSlide(0);
+setInterval(nextSlide, 4000);
+</script>
 
 </body>
 </html>

@@ -111,11 +111,18 @@
                 <label>Date</label>
                 <input type="date" id="book_date" name="date" min="{{ today }}" required>
 
+                <div class="availability-box">
+                    <h3>Available Slots</h3>
+                    <div id="availabilitySlots">
+                        Choose a facility and date to view available slots.
+                    </div>
+                </div>
+
                 <label>Start Time</label>
-                <input type="time" name="start_time" required>
+                <input type="time" id="book_start_time" name="start_time" required>
 
                 <label>End Time</label>
-                <input type="time" name="end_time" required>
+                <input type="time" id="book_end_time" name="end_time" required>
 
                 <button type="submit">Book Now</button>
 
@@ -155,6 +162,9 @@
                     <option>Advanced</option>
                 </select>
 
+                <label>Max Players</label>
+                <input type="number" name="max_players" min="2" max="30" value="8" required>
+
                 <button type="submit">Create Event</button>
 
             </form>
@@ -183,6 +193,9 @@
             <div class="approved-grid">
 
                 {% for event in events %}
+                {% set max_players = event.max_players|default(8)|int %}
+                {% set joined_total = event.members|length %}
+
                 <div class="approved-card">
 
                     <h3>{{ event.name }}</h3>
@@ -192,6 +205,15 @@
                     <p><strong>Date:</strong> {{ event.date }}</p>
                     <p><strong>Time:</strong> {{ event.start_time }} - {{ event.end_time }}</p>
                     <p><strong>Level:</strong> {{ event.level }}</p>
+
+                    <div class="capacity-box">
+                        <strong>Capacity:</strong>
+                        <span>{{ joined_total }}/{{ max_players }} players</span>
+
+                        <div class="capacity-bar">
+                            <div style="width: {{ [(joined_total / max_players * 100), 100] | min }}%;"></div>
+                        </div>
+                    </div>
 
                     <div class="members-box">
                         <strong>Members:</strong>
@@ -205,10 +227,14 @@
                     </div>
 
                     <div class="event-actions">
-                        <form method="POST" action="{{ url_for('join_event') }}">
-                            <input type="hidden" name="event_id" value="{{ event.id }}">
-                            <button type="submit">Join</button>
-                        </form>
+                        {% if joined_total >= max_players %}
+                            <button type="button" class="full-btn" disabled>Event Full</button>
+                        {% else %}
+                            <form method="POST" action="{{ url_for('join_event') }}">
+                                <input type="hidden" name="event_id" value="{{ event.id }}">
+                                <button type="submit">Join</button>
+                            </form>
+                        {% endif %}
 
                         <form method="POST" action="{{ url_for('unjoin_event') }}">
                             <input type="hidden" name="event_id" value="{{ event.id }}">
@@ -236,6 +262,50 @@ const today = new Date().toISOString().split("T")[0];
 document.getElementById("book_date").setAttribute("min", today);
 document.getElementById("event_date").setAttribute("min", today);
 
+function loadAvailability() {
+    const facility = document.getElementById("selected_facility").value;
+    const date = document.getElementById("book_date").value;
+    const container = document.getElementById("availabilitySlots");
+
+    if (!facility || !date) {
+        container.innerHTML = "Choose a facility and date to view available slots.";
+        return;
+    }
+
+    container.innerHTML = "Loading available slots...";
+
+    fetch(`/availability_slots?facility=${encodeURIComponent(facility)}&date=${date}`)
+        .then(response => response.json())
+        .then(slots => {
+            container.innerHTML = "";
+
+            slots.forEach(slot => {
+                const slotBtn = document.createElement("button");
+
+                slotBtn.type = "button";
+                slotBtn.className = slot.available ? "slot available" : "slot unavailable";
+                slotBtn.innerText = `${slot.start} - ${slot.end}`;
+
+                if (slot.available) {
+                    slotBtn.onclick = function () {
+                        document.getElementById("book_start_time").value = slot.start;
+                        document.getElementById("book_end_time").value = slot.end;
+                    };
+                } else {
+                    slotBtn.disabled = true;
+                }
+
+                container.appendChild(slotBtn);
+            });
+        })
+        .catch(error => {
+            container.innerHTML = "Unable to load slots. Please check your app.py route.";
+            console.log(error);
+        });
+}
+
+document.getElementById("book_date").addEventListener("change", loadAvailability);
+
 function selectFacility(facilityName) {
     document.getElementById("selected_facility").value = facilityName;
 
@@ -243,6 +313,8 @@ function selectFacility(facilityName) {
     cards.forEach(card => card.classList.remove("selected"));
 
     event.currentTarget.classList.add("selected");
+
+    loadAvailability();
 }
 
 function openModal() {
@@ -251,6 +323,14 @@ function openModal() {
 
 function closeModal() {
     document.getElementById("eventsModal").style.display = "none";
+}
+
+window.onclick = function(event) {
+    const modal = document.getElementById("eventsModal");
+
+    if (event.target === modal) {
+        closeModal();
+    }
 }
 </script>
 
