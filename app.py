@@ -890,6 +890,19 @@ def admin_dashboard():
     bookings = conn.execute("SELECT * FROM bookings").fetchall()
     events = conn.execute("SELECT * FROM events").fetchall()
 
+    total_users = len(users)
+    total_bookings = len(bookings)
+    total_events = len(events)
+    total_facilities = len(facilities)
+
+    overview_max = max(
+        total_users,
+        total_bookings,
+        total_events,
+        total_facilities,
+        1
+    )
+
     conn.close()
 
     return render_template(
@@ -898,9 +911,13 @@ def admin_dashboard():
         announcements=announcements,
         users=users,
         bookings=bookings,
-        events=events
+        events=events,
+        total_users=total_users,
+        total_bookings=total_bookings,
+        total_events=total_events,
+        total_facilities=total_facilities,
+        overview_max=overview_max
     )
-
 
 @app.route("/add_facility", methods=["POST"])
 def add_facility():
@@ -1009,6 +1026,64 @@ def reject_event(event_id):
 
     return redirect(url_for("admin_dashboard"))
 
+@app.route("/delete_user/<int:user_id>", methods=["POST"])
+def delete_user(user_id):
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    conn = get_db_connection()
+
+    user = conn.execute(
+        "SELECT * FROM users WHERE id = ?",
+        (user_id,)
+    ).fetchone()
+
+    if user:
+        username = user["username"]
+
+        conn.execute(
+            "DELETE FROM bookings WHERE username = ?",
+            (username,)
+        )
+
+        conn.execute(
+            "DELETE FROM joined_events WHERE username = ?",
+            (username,)
+        )
+
+        created_events = conn.execute(
+            "SELECT id FROM events WHERE created_by = ? OR organizer = ?",
+            (username, username)
+        ).fetchall()
+
+        for event in created_events:
+            conn.execute(
+                "DELETE FROM joined_events WHERE event_id = ?",
+                (event["id"],)
+            )
+
+        conn.execute(
+            "DELETE FROM events WHERE created_by = ? OR organizer = ?",
+            (username, username)
+        )
+
+        try:
+            conn.execute(
+                "DELETE FROM notifications WHERE username = ?",
+                (username,)
+            )
+        except:
+            pass
+
+        conn.execute(
+            "DELETE FROM users WHERE id = ?",
+            (user_id,)
+        )
+
+    conn.commit()
+    conn.close()
+
+    return redirect(url_for("admin_dashboard"))
 
 @app.route("/admin_logout")
 def admin_logout():

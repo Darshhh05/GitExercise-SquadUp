@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -68,43 +69,143 @@
     <div class="admin-grid">
 
 
-        <!-- WEBSITE OVERVIEW -->
+        <!-- WEBSITE OVERVIEW BAR GRAPH -->
 
-        <section class="admin-card">
+        <section class="admin-card overview-graph-section">
 
             <h2>Website Overview</h2>
 
-            <div class="overview-grid">
+            <p class="overview-subtitle">
+                System activity shown in bar graph format.
+            </p>
 
-                <div class="overview-box">
+            {% set total_users = users|length %}
+            {% set total_bookings = bookings|length %}
+            {% set total_events = events|length %}
+            {% set total_announcements = announcements|length %}
+            {% set overview_max = [total_users, total_bookings, total_events, total_announcements, 1] | max %}
 
-                    <h3>{{ users|length }}</h3>
+            <div class="overview-bar-graph">
 
-                    <p>Registered Users</p>
+                <div class="overview-bar-row">
+
+                    <span class="overview-label">Users</span>
+
+                    <div class="overview-track">
+
+                        <div class="overview-fill users-fill"
+                        style="width: {{ ((total_users / overview_max) * 100) | round(0) }}%;">
+
+                        </div>
+
+                    </div>
+
+                    <span class="overview-number">{{ total_users }}</span>
 
                 </div>
 
-                <div class="overview-box">
 
-                    <h3>{{ bookings|length }}</h3>
+                <div class="overview-bar-row">
 
-                    <p>Total Bookings</p>
+                    <span class="overview-label">Bookings</span>
+
+                    <div class="overview-track">
+
+                        <div class="overview-fill bookings-fill"
+                        style="width: {{ ((total_bookings / overview_max) * 100) | round(0) }}%;">
+
+                        </div>
+
+                    </div>
+
+                    <span class="overview-number">{{ total_bookings }}</span>
 
                 </div>
 
-                <div class="overview-box">
 
-                    <h3>{{ events|length }}</h3>
+                <div class="overview-bar-row">
 
-                    <p>Created Events</p>
+                    <span class="overview-label">Events</span>
+
+                    <div class="overview-track">
+
+                        <div class="overview-fill events-fill"
+                        style="width: {{ ((total_events / overview_max) * 100) | round(0) }}%;">
+
+                        </div>
+
+                    </div>
+
+                    <span class="overview-number">{{ total_events }}</span>
 
                 </div>
 
-                <div class="overview-box">
 
-                    <h3>{{ announcements|length }}</h3>
+                <div class="overview-bar-row">
 
-                    <p>Announcements</p>
+                    <span class="overview-label">Announcements</span>
+
+                    <div class="overview-track">
+
+                        <div class="overview-fill announcements-fill"
+                        style="width: {{ ((total_announcements / overview_max) * 100) | round(0) }}%;">
+
+                        </div>
+
+                    </div>
+
+                    <span class="overview-number">{{ total_announcements }}</span>
+
+                </div>
+
+            </div>
+
+
+            <!-- DELETE USER SECTION BELOW GRAPH -->
+
+            <div class="delete-users-panel">
+
+                <div class="delete-users-title">
+
+                    <h2>Delete Users</h2>
+
+                    <p>Remove users and their related booking records.</p>
+
+                </div>
+
+                <div class="delete-user-list">
+
+                    {% for user in users %}
+
+                    <div class="delete-user-row">
+
+                        <div class="delete-user-info">
+
+                            <h3>{{ user.full_name }}</h3>
+
+                            <p>@{{ user.username }} | {{ user.skill_level }}</p>
+
+                        </div>
+
+                        <button type="button"
+                        class="open-delete-btn"
+                        data-user-id="{{ user.id }}"
+                        data-username="{{ user.username }}"
+                        onclick="openDeleteUserModal(this)">
+
+                            Delete User
+
+                        </button>
+
+                    </div>
+
+                    {% else %}
+
+                    <p class="empty-admin-text">
+                        No users registered yet.
+                    </p>
+
+                    {% endfor %}
 
                 </div>
 
@@ -124,14 +225,9 @@
             action="{{ url_for('post_announcement') }}">
 
                 <textarea
-
                 name="message"
-
                 placeholder="Write announcement here"
-
-                required>
-
-                </textarea>
+                required></textarea>
 
                 <button type="submit">
 
@@ -193,7 +289,6 @@
     <div class="modal-box">
 
         <span class="close-btn"
-
         onclick="closeModal('usersModal')">
 
             &times;
@@ -218,6 +313,8 @@
 
                     <th>Avatar</th>
 
+                    <th>Action</th>
+
                 </tr>
 
                 {% for user in users %}
@@ -235,10 +332,22 @@
                     <td>
 
                         <img
-
                         src="{{ url_for('static', filename='images/' + user.avatar) }}"
-
                         class="table-avatar">
+
+                    </td>
+
+                    <td>
+
+                        <button type="button"
+                        class="table-delete-btn"
+                        data-user-id="{{ user.id }}"
+                        data-username="{{ user.username }}"
+                        onclick="openDeleteUserModal(this)">
+
+                            Delete
+
+                        </button>
 
                     </td>
 
@@ -263,7 +372,6 @@
     <div class="modal-box">
 
         <span class="close-btn"
-
         onclick="closeModal('bookingsModal')">
 
             &times;
@@ -329,9 +437,7 @@
                     <td>
 
                         <a
-
                         class="approve"
-
                         href="{{ url_for('approve_booking', booking_id=booking.id) }}">
 
                             Approve
@@ -339,9 +445,7 @@
                         </a>
 
                         <a
-
                         class="reject"
-
                         href="{{ url_for('reject_booking', booking_id=booking.id) }}">
 
                             Reject
@@ -371,7 +475,6 @@
     <div class="modal-box">
 
         <span class="close-btn"
-
         onclick="closeModal('eventsModal')">
 
             &times;
@@ -445,9 +548,7 @@
                     <td>
 
                         <a
-
                         class="approve"
-
                         href="{{ url_for('approve_event', event_id=event.id) }}">
 
                             Approve
@@ -455,9 +556,7 @@
                         </a>
 
                         <a
-
                         class="reject"
-
                         href="{{ url_for('reject_event', event_id=event.id) }}">
 
                             Reject
@@ -480,38 +579,140 @@
 
 
 
+<!-- DELETE USER CONFIRMATION MODAL -->
+
+<div id="deleteUserModal" class="delete-user-modal">
+
+    <div class="delete-user-modal-box">
+
+        <span class="delete-user-close"
+        onclick="closeDeleteUserModal()">
+
+            &times;
+
+        </span>
+
+        <div class="delete-warning-icon">
+
+            ⚠️
+
+        </div>
+
+        <h2>Delete User?</h2>
+
+        <p>
+            Are you sure you want to delete
+            <strong id="deleteUserName"></strong>?
+        </p>
+
+        <p class="delete-warning-text">
+            This will also remove the user's bookings, joined events,
+            created events and notifications.
+        </p>
+
+        <div class="delete-modal-actions">
+
+            <button type="button"
+            class="cancel-delete-btn"
+            onclick="closeDeleteUserModal()">
+
+                Cancel
+
+            </button>
+
+            <form id="deleteUserForm" method="POST">
+
+                <button type="submit"
+                class="confirm-delete-btn">
+
+                    Yes, Delete
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
 <script>
 
-function openModal(id){
+function openModal(id) {
 
-document.getElementById(id).style.display='flex';
-
-}
-
-function closeModal(id){
-
-document.getElementById(id).style.display='none';
+    document.getElementById(id).style.display = 'flex';
 
 }
 
-window.onclick=function(e){
+function closeModal(id) {
 
-const modals=document.querySelectorAll('.modal');
-
-modals.forEach(modal=>{
-
-if(e.target===modal){
-
-modal.style.display='none';
+    document.getElementById(id).style.display = 'none';
 
 }
+
+window.onclick = function(e) {
+
+    const modals = document.querySelectorAll('.modal');
+
+    modals.forEach(modal => {
+
+        if (e.target === modal) {
+
+            modal.style.display = 'none';
+
+        }
+
+    });
+
+}
+
+
+function openDeleteUserModal(button) {
+
+    const userId = button.getAttribute("data-user-id");
+
+    const username = button.getAttribute("data-username");
+
+    const modal = document.getElementById("deleteUserModal");
+
+    const form = document.getElementById("deleteUserForm");
+
+    const nameText = document.getElementById("deleteUserName");
+
+    nameText.innerText = username;
+
+    form.action = "/delete_user/" + userId;
+
+    modal.classList.add("show");
+
+}
+
+
+function closeDeleteUserModal() {
+
+    document.getElementById("deleteUserModal").classList.remove("show");
+
+}
+
+
+window.addEventListener("click", function(event) {
+
+    const deleteModal = document.getElementById("deleteUserModal");
+
+    if (event.target === deleteModal) {
+
+        closeDeleteUserModal();
+
+    }
 
 });
-
-}
 
 </script>
 
 </body>
 
 </html>
+```
