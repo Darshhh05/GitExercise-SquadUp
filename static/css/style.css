@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
 
 * {
     box-sizing: border-box;
@@ -299,15 +299,16 @@ body {
 
 .badge-showcase h2,
 .badge-heading h2 {
-    font-family: "Times New Roman", Times, serif;
-    font-size: 42px;
-    font-weight: 800;
+    font-family: 'Poppins', sans-serif;
+    font-size: 46px;
+    font-weight: 900;
     font-style: italic;
     margin-bottom: 45px;
-    letter-spacing: 1px;
+    letter-spacing: 1.5px;
     position: relative;
     z-index: 2;
     color: white;
+    text-transform: uppercase;
     text-shadow:
         0 0 12px rgba(255,255,255,0.25),
         0 0 22px rgba(217,255,0,0.38);
@@ -324,8 +325,9 @@ body {
 }
 
 .badge-heading p {
-    font-family: "Times New Roman", Times, serif;
+    font-family: 'Poppins', sans-serif;
     font-size: 16px;
+    font-weight: 500;
     color: rgba(255,255,255,0.78);
 }
 
@@ -409,9 +411,9 @@ body {
 .badge-item h3 {
     position: relative;
     z-index: 2;
-    font-family: "Times New Roman", Times, serif;
-    font-size: 23px;
-    font-weight: 800;
+    font-family: 'Poppins', sans-serif;
+    font-size: 22px;
+    font-weight: 900;
     font-style: italic;
     line-height: 1.15;
     color: white;
@@ -421,17 +423,19 @@ body {
 .badge-item p {
     position: relative;
     z-index: 2;
-    font-family: "Times New Roman", Times, serif;
-    font-size: 22px;
-    font-weight: 800;
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 900;
     font-style: italic;
     line-height: 1.25;
     color: white;
     margin-top: 8px;
+    letter-spacing: 0.3px;
     text-shadow: 0 0 10px rgba(255,255,255,0.10);
 }
 
 .badge-item h3 + p {
+    font-family: 'Poppins', sans-serif;
     font-size: 13px;
     font-weight: 500;
     font-style: normal;
@@ -494,7 +498,7 @@ body {
 /* FOOTER */
 
 .footer {
-    background: #071b33;
+    background: #2536ef;
     color: white;
     text-align: center;
     padding: 45px;

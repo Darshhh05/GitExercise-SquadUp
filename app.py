@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import sqlite3
-from datetime import date
+from datetime import date, datetime, timedelta
 import smtplib
 from email.message import EmailMessage
 
@@ -65,6 +65,8 @@ def fix_database():
         skill_level TEXT,
         avatar TEXT,
         email TEXT
+        last_activity TEXT
+                 
     )
     """)
 
@@ -131,11 +133,29 @@ def update_database():
     except sqlite3.OperationalError:
         pass
 
+    # Add last_activity column to old users table if it does not exist yet
+    try:
+        conn.execute("ALTER TABLE users ADD COLUMN last_activity TEXT DEFAULT ''")
+    except sqlite3.OperationalError:
+        pass
+
+    # Give existing users a current activity date first
+    conn.execute(
+        """
+        UPDATE users
+        SET last_activity = ?
+        WHERE last_activity IS NULL OR last_activity = ''
+        """,
+        (datetime.now().strftime("%Y-%m-%d %H:%M:%S"),)
+    )
+
     # Add max_players column to old events table if it does not exist yet
     try:
         conn.execute("ALTER TABLE events ADD COLUMN max_players INTEGER DEFAULT 8")
     except sqlite3.OperationalError:
         pass
+
+
 
     # Add default facilities if your facilities table is empty
     default_facilities = [
@@ -263,10 +283,12 @@ def register():
             conn.close()
             return "Username already exists!"
 
+        last_activity = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
         conn.execute("""
-            INSERT INTO users (full_name, username, password, skill_level, avatar, email)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, (full_name, username, password, skill_level, avatar, email))
+            INSERT INTO users (full_name, username, password, skill_level, avatar, email, last_activity)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (full_name, username, password, skill_level, avatar, email, last_activity))
 
         conn.commit()
         conn.close()
@@ -301,16 +323,26 @@ def login():
         password = request.form["password"]
 
         conn = get_db_connection()
+
         user = conn.execute(
             "SELECT * FROM users WHERE username = ? AND password = ?",
             (username, password)
         ).fetchone()
-        conn.close()
 
         if user:
             session["username"] = user["username"]
+
+            conn.execute(
+                "UPDATE users SET last_activity = ? WHERE username = ?",
+                (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), username)
+            )
+
+            conn.commit()
+            conn.close()
+
             return redirect(url_for("dashboard"))
 
+        conn.close()
         return "Invalid username or password"
 
     return render_template("login.html")
@@ -889,6 +921,17 @@ def admin_dashboard():
     users = conn.execute("SELECT * FROM users").fetchall()
     bookings = conn.execute("SELECT * FROM bookings").fetchall()
     events = conn.execute("SELECT * FROM events").fetchall()
+    two_months_ago = datetime.now() - timedelta(days=60)
+
+    inactive_users = conn.execute("""
+    SELECT *
+    FROM users
+    WHERE last_activity IS NOT NULL
+    AND last_activity != ''
+    AND datetime(last_activity) <= datetime(?)
+    """, (two_months_ago.strftime("%Y-%m-%d %H:%M:%S"),)).fetchall()
+
+
 
     total_users = len(users)
     total_bookings = len(bookings)
@@ -912,6 +955,7 @@ def admin_dashboard():
         users=users,
         bookings=bookings,
         events=events,
+        inactive_users=inactive_users,
         total_users=total_users,
         total_bookings=total_bookings,
         total_events=total_events,
@@ -1084,6 +1128,24 @@ def delete_user(user_id):
     conn.close()
 
     return redirect(url_for("admin_dashboard"))
+@app.route("/make_inactive/<username>")
+def make_inactive(username):
+    if "admin" not in session:
+        return redirect(url_for("admin_login"))
+
+    inactive_date = (datetime.now() - timedelta(days=70)).strftime("%Y-%m-%d %H:%M:%S")
+
+    conn = get_db_connection()
+
+    conn.execute(
+        "UPDATE users SET last_activity = ? WHERE username = ?",
+        (inactive_date, username)
+    )
+
+    conn.commit()
+    conn.close()
+
+    return f"{username} has been marked as inactive for demo."
 
 @app.route("/admin_logout")
 def admin_logout():

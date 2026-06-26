@@ -1,83 +1,37 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-
     <meta charset="UTF-8">
-
     <title>Admin Dashboard - SquadUp</title>
-
-    <link rel="stylesheet"
-    href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
-
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin_dashboard.css') }}">
 </head>
 
 <body>
 
 <div class="admin-page">
 
-    <!-- HEADER -->
-
     <div class="admin-header">
-
         <div>
-
             <h1>Squad<span>Up</span> Admin</h1>
-
             <p>Manage users, bookings, events and announcements.</p>
-
         </div>
-
-        <a href="{{ url_for('admin_logout') }}"
-        class="logout-btn">
-
+        <a href="{{ url_for('admin_logout') }}" class="logout-btn">
             Admin Logout
-
         </a>
-
     </div>
-
-
-    <!-- QUICK ACTION BUTTONS -->
 
     <div class="quick-actions">
-
-        <button onclick="openModal('usersModal')">
-
-            Registered Users
-
-        </button>
-
-        <button onclick="openModal('bookingsModal')">
-
-            Facility Bookings
-
-        </button>
-
-        <button onclick="openModal('eventsModal')">
-
-            Created Events
-
-        </button>
-
+        <button onclick="openModal('usersModal')">Registered Users</button>
+        <button onclick="openModal('bookingsModal')">Facility Bookings</button>
+        <button onclick="openModal('eventsModal')">Created Events</button>
     </div>
-
-
-    <!-- MAIN CARDS -->
 
     <div class="admin-grid">
 
-
-        <!-- WEBSITE OVERVIEW BAR GRAPH -->
-
         <section class="admin-card overview-graph-section">
-
             <h2>Website Overview</h2>
-
-            <p class="overview-subtitle">
-                System activity shown in bar graph format.
-            </p>
+            <p class="overview-subtitle">System activity shown in bar graph format.</p>
 
             {% set total_users = users|length %}
             {% set total_bookings = bookings|length %}
@@ -86,633 +40,257 @@
             {% set overview_max = [total_users, total_bookings, total_events, total_announcements, 1] | max %}
 
             <div class="overview-bar-graph">
-
                 <div class="overview-bar-row">
-
                     <span class="overview-label">Users</span>
-
                     <div class="overview-track">
-
-                        <div class="overview-fill users-fill"
-                        style="width: {{ ((total_users / overview_max) * 100) | round(0) }}%;">
-
-                        </div>
-
+                        <div class="overview-fill users-fill" style="width: {{ ((total_users / overview_max) * 100) | round(0) }}%;"></div>
                     </div>
-
                     <span class="overview-number">{{ total_users }}</span>
-
                 </div>
 
-
                 <div class="overview-bar-row">
-
                     <span class="overview-label">Bookings</span>
-
                     <div class="overview-track">
-
-                        <div class="overview-fill bookings-fill"
-                        style="width: {{ ((total_bookings / overview_max) * 100) | round(0) }}%;">
-
-                        </div>
-
+                        <div class="overview-fill bookings-fill" style="width: {{ ((total_bookings / overview_max) * 100) | round(0) }}%;"></div>
                     </div>
-
                     <span class="overview-number">{{ total_bookings }}</span>
-
                 </div>
 
-
                 <div class="overview-bar-row">
-
                     <span class="overview-label">Events</span>
-
                     <div class="overview-track">
-
-                        <div class="overview-fill events-fill"
-                        style="width: {{ ((total_events / overview_max) * 100) | round(0) }}%;">
-
-                        </div>
-
+                        <div class="overview-fill events-fill" style="width: {{ ((total_events / overview_max) * 100) | round(0) }}%;"></div>
                     </div>
-
                     <span class="overview-number">{{ total_events }}</span>
-
                 </div>
-
 
                 <div class="overview-bar-row">
-
                     <span class="overview-label">Announcements</span>
-
                     <div class="overview-track">
-
-                        <div class="overview-fill announcements-fill"
-                        style="width: {{ ((total_announcements / overview_max) * 100) | round(0) }}%;">
-
-                        </div>
-
+                        <div class="overview-fill announcements-fill" style="width: {{ ((total_announcements / overview_max) * 100) | round(0) }}%;"></div>
                     </div>
-
                     <span class="overview-number">{{ total_announcements }}</span>
-
                 </div>
-
             </div>
-
-
-            <!-- DELETE USER SECTION BELOW GRAPH -->
 
             <div class="delete-users-panel">
-
                 <div class="delete-users-title">
-
-                    <h2>Delete Users</h2>
-
-                    <p>Remove users and their related booking records.</p>
-
+                    <h2>Inactive User Review</h2>
+                    <p>Accounts with no activity for > 2 months. Status: <span style="color: #e76f51; font-weight: bold;">Pending Action</span></p>
                 </div>
-
                 <div class="delete-user-list">
-
-                    {% for user in users %}
-
-                    <div class="delete-user-row">
-
+                    {% for user in inactive_users %}
+                    <div class="delete-user-row" style="align-items: center;">
                         <div class="delete-user-info">
-
                             <h3>{{ user.full_name }}</h3>
-
-                            <p>@{{ user.username }} | {{ user.skill_level }}</p>
-
+                            <p>@{{ user.username }} | Last Seen: {{ user.last_activity if user.last_activity else 'N/A' }}</p>
                         </div>
-
-                        <button type="button"
-                        class="open-delete-btn"
-                        data-user-id="{{ user.id }}"
-                        data-username="{{ user.username }}"
-                        onclick="openDeleteUserModal(this)">
-
-                            Delete User
-
-                        </button>
-
+                        
+                        <div style="display: flex; gap: 8px;">
+                            <button type="button"
+                                    class="open-delete-btn"
+                                    data-user-id="{{ user.id }}"
+                                    data-username="{{ user.username }}"
+                                    onclick="openDeleteUserModal(this)">
+                                Delete
+                            </button>
+                        </div>
                     </div>
-
                     {% else %}
-
                     <p class="empty-admin-text">
-                        No users registered yet.
+                        No inactive student accounts pending review.
                     </p>
-
                     {% endfor %}
-
                 </div>
-
             </div>
-
         </section>
-
-
-
-        <!-- POST ANNOUNCEMENT -->
 
         <section class="admin-card">
-
             <h2>Post Announcement</h2>
-
-            <form method="POST"
-            action="{{ url_for('post_announcement') }}">
-
-                <textarea
-                name="message"
-                placeholder="Write announcement here"
-                required></textarea>
-
-                <button type="submit">
-
-                    Post Announcement
-
-                </button>
-
+            <form method="POST" action="{{ url_for('post_announcement') }}">
+                <textarea name="message" placeholder="Write announcement here" required></textarea>
+                <button type="submit">Post Announcement</button>
             </form>
-
-
 
             <h3>Current Announcements</h3>
-
-
-
             <div class="mini-list">
-
                 {% for announcement in announcements %}
-
                 <div class="mini-item">
-
-                    <span>
-
-                        {{ announcement.message }}
-
-                    </span>
-
-                    <a href="{{ url_for('delete_announcement', announcement_id=announcement.id) }}">
-
-                        Delete
-
-                    </a>
-
+                    <span>{{ announcement.message }}</span>
+                    <a href="{{ url_for('delete_announcement', announcement_id=announcement.id) }}">Delete</a>
                 </div>
-
                 {% else %}
-
-                <p>
-
-                    No announcements yet.
-
-                </p>
-
+                <p>No announcements yet.</p>
                 {% endfor %}
-
             </div>
-
         </section>
-
     </div>
-
 </div>
-
-
-<!-- REGISTERED USERS MODAL -->
 
 <div id="usersModal" class="modal">
-
     <div class="modal-box">
-
-        <span class="close-btn"
-        onclick="closeModal('usersModal')">
-
-            &times;
-
-        </span>
-
+        <span class="close-btn" onclick="closeModal('usersModal')">&times;</span>
         <h2>Registered Users</h2>
-
         <div class="table-wrap">
-
             <table>
-
                 <tr>
-
                     <th>User ID</th>
-
                     <th>Full Name</th>
-
                     <th>Username</th>
-
                     <th>Skill Level</th>
-
                     <th>Avatar</th>
-
                     <th>Action</th>
-
                 </tr>
-
                 {% for user in users %}
-
                 <tr>
-
                     <td>{{ user.id }}</td>
-
                     <td>{{ user.full_name }}</td>
-
                     <td>{{ user.username }}</td>
-
                     <td>{{ user.skill_level }}</td>
-
                     <td>
-
-                        <img
-                        src="{{ url_for('static', filename='images/' + user.avatar) }}"
-                        class="table-avatar">
-
+                        <img src="{{ url_for('static', filename='images/' + user.avatar) }}" class="table-avatar">
                     </td>
-
                     <td>
-
-                        <button type="button"
-                        class="table-delete-btn"
-                        data-user-id="{{ user.id }}"
-                        data-username="{{ user.username }}"
-                        onclick="openDeleteUserModal(this)">
-
+                        <button type="button" class="table-delete-btn" data-user-id="{{ user.id }}" data-username="{{ user.username }}" onclick="openDeleteUserModal(this)">
                             Delete
-
                         </button>
-
                     </td>
-
                 </tr>
-
                 {% endfor %}
-
             </table>
-
         </div>
-
     </div>
-
 </div>
-
-
-
-<!-- FACILITY BOOKINGS MODAL -->
 
 <div id="bookingsModal" class="modal">
-
     <div class="modal-box">
-
-        <span class="close-btn"
-        onclick="closeModal('bookingsModal')">
-
-            &times;
-
-        </span>
-
+        <span class="close-btn" onclick="closeModal('bookingsModal')">&times;</span>
         <h2>Facility Bookings</h2>
-
         <div class="table-wrap">
-
             <table>
-
                 <tr>
-
                     <th>ID</th>
-
                     <th>Username</th>
-
                     <th>Facility</th>
-
                     <th>Date</th>
-
                     <th>Time</th>
-
                     <th>Status</th>
-
                     <th>Action</th>
-
                 </tr>
-
                 {% for booking in bookings %}
-
                 <tr>
-
                     <td>{{ booking.id }}</td>
-
                     <td>{{ booking.username }}</td>
-
                     <td>{{ booking.facility }}</td>
-
                     <td>{{ booking.date }}</td>
-
+                    <td>{{ booking.start_time }} - {{ booking.end_time }}</td>
+                    <td><span class="status">{{ booking.status }}</span></td>
                     <td>
-
-                        {{ booking.start_time }}
-
-                        -
-
-                        {{ booking.end_time }}
-
+                        <a class="approve" href="{{ url_for('approve_booking', booking_id=booking.id) }}">Approve</a>
+                        <a class="reject" href="{{ url_for('reject_booking', booking_id=booking.id) }}">Reject</a>
                     </td>
-
-                    <td>
-
-                        <span class="status">
-
-                            {{ booking.status }}
-
-                        </span>
-
-                    </td>
-
-                    <td>
-
-                        <a
-                        class="approve"
-                        href="{{ url_for('approve_booking', booking_id=booking.id) }}">
-
-                            Approve
-
-                        </a>
-
-                        <a
-                        class="reject"
-                        href="{{ url_for('reject_booking', booking_id=booking.id) }}">
-
-                            Reject
-
-                        </a>
-
-                    </td>
-
                 </tr>
-
                 {% endfor %}
-
             </table>
-
         </div>
-
     </div>
-
 </div>
-
-
-
-<!-- EVENTS MODAL -->
 
 <div id="eventsModal" class="modal">
-
     <div class="modal-box">
-
-        <span class="close-btn"
-        onclick="closeModal('eventsModal')">
-
-            &times;
-
-        </span>
-
+        <span class="close-btn" onclick="closeModal('eventsModal')">&times;</span>
         <h2>Created Events</h2>
-
         <div class="table-wrap">
-
             <table>
-
                 <tr>
-
                     <th>ID</th>
-
                     <th>Name</th>
-
                     <th>Created By</th>
-
                     <th>Facility</th>
-
                     <th>Date</th>
-
                     <th>Time</th>
-
                     <th>Level</th>
-
                     <th>Status</th>
-
                     <th>Action</th>
-
                 </tr>
-
                 {% for event in events %}
-
                 <tr>
-
                     <td>{{ event.id }}</td>
-
                     <td>{{ event.name }}</td>
-
                     <td>{{ event.created_by }}</td>
-
                     <td>{{ event.facility }}</td>
-
                     <td>{{ event.date }}</td>
-
-                    <td>
-
-                        {{ event.start_time }}
-
-                        -
-
-                        {{ event.end_time }}
-
-                    </td>
-
+                    <td>{{ event.start_time }} - {{ event.end_time }}</td>
                     <td>{{ event.level }}</td>
-
+                    <td><span class="status">{{ event.status }}</span></td>
                     <td>
-
-                        <span class="status">
-
-                            {{ event.status }}
-
-                        </span>
-
+                        <a class="approve" href="{{ url_for('approve_event', event_id=event.id) }}">Approve</a>
+                        <a class="reject" href="{{ url_for('reject_event', event_id=event.id) }}">Reject</a>
                     </td>
-
-                    <td>
-
-                        <a
-                        class="approve"
-                        href="{{ url_for('approve_event', event_id=event.id) }}">
-
-                            Approve
-
-                        </a>
-
-                        <a
-                        class="reject"
-                        href="{{ url_for('reject_event', event_id=event.id) }}">
-
-                            Reject
-
-                        </a>
-
-                    </td>
-
                 </tr>
-
                 {% endfor %}
-
             </table>
-
         </div>
-
     </div>
-
 </div>
-
-
-
-<!-- DELETE USER CONFIRMATION MODAL -->
 
 <div id="deleteUserModal" class="delete-user-modal">
-
     <div class="delete-user-modal-box">
-
-        <span class="delete-user-close"
-        onclick="closeDeleteUserModal()">
-
-            &times;
-
-        </span>
-
-        <div class="delete-warning-icon">
-
-            ⚠️
-
-        </div>
-
+        <span class="delete-user-close" onclick="closeDeleteUserModal()">&times;</span>
+        <div class="delete-warning-icon">⚠️</div>
         <h2>Delete User?</h2>
-
-        <p>
-            Are you sure you want to delete
-            <strong id="deleteUserName"></strong>?
-        </p>
-
-        <p class="delete-warning-text">
-            This will also remove the user's bookings, joined events,
-            created events and notifications.
-        </p>
-
+        <p>Are you sure you want to delete <strong id="deleteUserName"></strong>?</p>
+        <p class="delete-warning-text">This will also remove the user's bookings, joined events, created events and notifications.</p>
         <div class="delete-modal-actions">
-
-            <button type="button"
-            class="cancel-delete-btn"
-            onclick="closeDeleteUserModal()">
-
-                Cancel
-
-            </button>
-
+            <button type="button" class="cancel-delete-btn" onclick="closeDeleteUserModal()">Cancel</button>
             <form id="deleteUserForm" method="POST">
-
-                <button type="submit"
-                class="confirm-delete-btn">
-
-                    Yes, Delete
-
-                </button>
-
+                <button type="submit" class="confirm-delete-btn">Yes, Delete</button>
             </form>
-
         </div>
-
     </div>
-
 </div>
 
-
-
 <script>
-
 function openModal(id) {
-
     document.getElementById(id).style.display = 'flex';
-
 }
 
 function closeModal(id) {
-
     document.getElementById(id).style.display = 'none';
-
 }
 
 window.onclick = function(e) {
-
     const modals = document.querySelectorAll('.modal');
-
     modals.forEach(modal => {
-
         if (e.target === modal) {
-
             modal.style.display = 'none';
-
         }
-
     });
-
 }
-
 
 function openDeleteUserModal(button) {
-
     const userId = button.getAttribute("data-user-id");
-
     const username = button.getAttribute("data-username");
-
     const modal = document.getElementById("deleteUserModal");
-
     const form = document.getElementById("deleteUserForm");
-
     const nameText = document.getElementById("deleteUserName");
-
+    
     nameText.innerText = username;
-
     form.action = "/delete_user/" + userId;
-
     modal.classList.add("show");
-
 }
-
 
 function closeDeleteUserModal() {
-
     document.getElementById("deleteUserModal").classList.remove("show");
-
 }
 
-
 window.addEventListener("click", function(event) {
-
     const deleteModal = document.getElementById("deleteUserModal");
-
     if (event.target === deleteModal) {
-
         closeDeleteUserModal();
-
     }
-
 });
-
 </script>
 
 </body>
-
 </html>
-```
