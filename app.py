@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 import sqlite3
 from datetime import date, datetime, timedelta
+from html import escape
 import smtplib
 import os
 from email.message import EmailMessage
@@ -1162,6 +1163,130 @@ def admin_logout():
 def logout():
     session.clear()
     return redirect(url_for("home"))
+
+def make_table(title, rows):
+    html_table = f"<h2>{escape(title)}</h2>"
+
+    if not rows:
+        return html_table + "<p>No data found.</p>"
+
+    columns = rows[0].keys()
+
+    html_table += "<table>"
+    html_table += "<tr>"
+
+    for col in columns:
+        html_table += f"<th>{escape(str(col))}</th>"
+
+    html_table += "</tr>"
+
+    for row in rows:
+        html_table += "<tr>"
+
+        for col in columns:
+            value = row[col]
+
+            if col.lower() == "password":
+                value = "******"
+
+            html_table += f"<td>{escape(str(value))}</td>"
+
+        html_table += "</tr>"
+
+    html_table += "</table>"
+    return html_table
+
+
+@app.route("/database-view")
+def database_view():
+    if request.args.get("key") != ADMIN_PASSWORD:
+        return "Access denied", 403
+
+    conn = get_db_connection()
+
+    table_names = [
+        "users",
+        "facilities",
+        "bookings",
+        "events",
+        "joined_events",
+        "announcements"
+    ]
+
+    content = ""
+
+    for table in table_names:
+        try:
+            rows = conn.execute(f"SELECT * FROM {table}").fetchall()
+            content += make_table(table, rows)
+        except Exception as e:
+            content += f"<h2>{table}</h2><p>Error: {escape(str(e))}</p>"
+
+    conn.close()
+
+    return f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>SquadUp Database View</title>
+        <style>
+            body {{
+                font-family: Arial, sans-serif;
+                background: #f4f7fb;
+                padding: 30px;
+            }}
+
+            h1 {{
+                color: #264653;
+            }}
+
+            h2 {{
+                margin-top: 35px;
+                color: #2a9d8f;
+            }}
+
+            table {{
+                width: 100%;
+                border-collapse: collapse;
+                background: white;
+                margin-bottom: 25px;
+                box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+            }}
+
+            th {{
+                background: #264653;
+                color: white;
+                padding: 10px;
+                text-align: left;
+            }}
+
+            td {{
+                padding: 10px;
+                border-bottom: 1px solid #ddd;
+            }}
+
+            tr:hover {{
+                background: #f1f1f1;
+            }}
+
+            .back {{
+                display: inline-block;
+                margin-bottom: 20px;
+                padding: 10px 15px;
+                background: #2a9d8f;
+                color: white;
+                text-decoration: none;
+                border-radius: 6px;
+            }}
+        </style>
+    </head>
+    <body>
+        <a class="back" href="/admin_dashboard">Back to Admin Dashboard</a>
+        <h1>SquadUp SQLite Database</h1>
+        {content}
+    </body>
+    </html>
+    """
 
 
 if __name__ == "__main__":
