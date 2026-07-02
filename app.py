@@ -12,8 +12,9 @@ app.secret_key = "squadup_secret_key"
 ADMIN_USERNAME = "admin"
 ADMIN_PASSWORD = "admin123"
 
-EMAIL_ADDRESS = os.environ.get("EMAIL_ADDRESS")
-EMAIL_APP_PASSWORD = os.environ.get("EMAIL_APP_PASSWORD")
+EMAIL_ADDRESS = "squaduphere@gmail.com"
+EMAIL_APP_PASSWORD = "ixudbfygyxgvlwgb"
+
 
 def get_db_connection():
     conn = sqlite3.connect("database.db")
@@ -22,53 +23,42 @@ def get_db_connection():
 
 def send_email(to_email, subject, body):
     try:
-        sender_email = os.environ.get("EMAIL_ADDRESS")
-        sender_password = os.environ.get("EMAIL_APP_PASSWORD")
-
-        print("EMAIL FUNCTION STARTED", flush=True)
-        print("Receiver:", to_email, flush=True)
-        print("EMAIL_ADDRESS exists:", bool(sender_email), flush=True)
-        print("EMAIL_APP_PASSWORD exists:", bool(sender_password), flush=True)
-
-        if not sender_email or not sender_password:
-            print("Email skipped: EMAIL_ADDRESS or EMAIL_APP_PASSWORD missing", flush=True)
+        if not EMAIL_ADDRESS or not EMAIL_APP_PASSWORD:
+            print("Email skipped: EMAIL_ADDRESS or EMAIL_APP_PASSWORD missing")
             return False
 
         msg = EmailMessage()
-        msg["From"] = sender_email
+        msg["From"] = EMAIL_ADDRESS
         msg["To"] = to_email
         msg["Subject"] = subject
         msg.set_content(body)
 
-        # Try Gmail SSL port first
-        try:
-            with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=20) as smtp:
-                smtp.login(sender_email, sender_password)
-                smtp.send_message(msg)
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=10) as smtp:
+            smtp.login(EMAIL_ADDRESS, EMAIL_APP_PASSWORD)
+            smtp.send_message(msg)
 
-            print("Email sent successfully using SSL 465", flush=True)
-            return True
-
-        except Exception as ssl_error:
-            print("SSL 465 failed:", ssl_error, flush=True)
-
-        # Try Gmail TLS port second
-        try:
-            with smtplib.SMTP("smtp.gmail.com", 587, timeout=20) as smtp:
-                smtp.starttls()
-                smtp.login(sender_email, sender_password)
-                smtp.send_message(msg)
-
-            print("Email sent successfully using TLS 587", flush=True)
-            return True
-
-        except Exception as tls_error:
-            print("TLS 587 failed:", tls_error, flush=True)
-            return False
+        print("Email sent successfully")
+        return True
 
     except Exception as e:
-        print("Email failed but website continues:", e, flush=True)
+        print("Email failed but website continues:", e)
         return False
+    
+def get_user_email(username):
+    conn = get_db_connection()
+
+    user = conn.execute(
+        "SELECT email FROM users WHERE username = ?",
+        (username,)
+    ).fetchone()
+
+    conn.close()
+
+    if user and user["email"]:
+        return user["email"]
+
+    return None        
+
 
 def fix_database():
     conn = get_db_connection()
@@ -81,7 +71,7 @@ def fix_database():
         password TEXT,
         skill_level TEXT,
         avatar TEXT,
-        email TEXT
+        email TEXT,
         last_activity TEXT
                  
     )
@@ -1042,9 +1032,40 @@ def approve_booking(booking_id):
         return redirect(url_for("admin_login"))
 
     conn = get_db_connection()
-    conn.execute("UPDATE bookings SET status = 'Approved' WHERE id = ?", (booking_id,))
+
+    booking = conn.execute(
+        "SELECT * FROM bookings WHERE id = ?",
+        (booking_id,)
+    ).fetchone()
+
+    conn.execute(
+        "UPDATE bookings SET status = 'Approved' WHERE id = ?",
+        (booking_id,)
+    )
+
     conn.commit()
     conn.close()
+
+    if booking:
+        user_email = get_user_email(booking["username"])
+
+        if user_email:
+            send_email(
+                user_email,
+                "SquadUp Booking Approved",
+                f"""Hi {booking["username"]},
+
+Good news! Your booking has been approved.
+
+Facility: {booking["facility"]}
+Date: {booking["date"]}
+Time: {booking["start_time"]} - {booking["end_time"]}
+
+Enjoy your game!
+
+Regards,
+SquadUp Team"""
+            )
 
     return redirect(url_for("admin_dashboard"))
 
@@ -1055,12 +1076,42 @@ def reject_booking(booking_id):
         return redirect(url_for("admin_login"))
 
     conn = get_db_connection()
-    conn.execute("UPDATE bookings SET status = 'Rejected' WHERE id = ?", (booking_id,))
+
+    booking = conn.execute(
+        "SELECT * FROM bookings WHERE id = ?",
+        (booking_id,)
+    ).fetchone()
+
+    conn.execute(
+        "UPDATE bookings SET status = 'Rejected' WHERE id = ?",
+        (booking_id,)
+    )
+
     conn.commit()
     conn.close()
 
-    return redirect(url_for("admin_dashboard"))
+    if booking:
+        user_email = get_user_email(booking["username"])
 
+        if user_email:
+            send_email(
+                user_email,
+                "SquadUp Booking Rejected",
+                f"""Hi {booking["username"]},
+
+Your booking request has been rejected.
+
+Facility: {booking["facility"]}
+Date: {booking["date"]}
+Time: {booking["start_time"]} - {booking["end_time"]}
+
+Please choose another available slot.
+
+Regards,
+SquadUp Team"""
+            )
+
+    return redirect(url_for("admin_dashboard"))
 
 @app.route("/approve_event/<int:event_id>")
 def approve_event(event_id):
@@ -1299,30 +1350,7 @@ def database_view():
     </html>
     """
 
-@app.route("/test-email")
-def test_email():
-    if request.args.get("key") != ADMIN_PASSWORD:
-        return "Access denied", 403
-
-    to_email = request.args.get("to")
-
-    if not to_email:
-        return "Add receiver email like: /test-email?key=admin123&to=yourmail@gmail.com"
-
-    sent = send_email(
-        to_email,
-        "SquadUp Email Test",
-        "This is a test email from SquadUp. If you received this, the email feature is working."
-    )
-
-    if sent:
-        return "Email sent successfully. Check inbox/spam/promotions."
-    else:
-        return "Email failed. Check Render Logs."
-
-
-if __name__ == "__main__":
-    fix_database()
+fix_database()
 update_database()
 
 if __name__ == "__main__":
