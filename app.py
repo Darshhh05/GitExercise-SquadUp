@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session, j
 import sqlite3
 from datetime import date, datetime, timedelta
 import smtplib
+import os
 from email.message import EmailMessage
 
 app = Flask(__name__)
@@ -10,9 +11,8 @@ app.secret_key = "squadup_secret_key"
 ADMIN_USERNAME = "admin"
 ADMIN_PASSWORD = "admin123"
 
-EMAIL_ADDRESS = "squaduphere@gmail.com"
-EMAIL_APP_PASSWORD = "ixudbfygyxgvlwgb"
-
+EMAIL_ADDRESS = os.environ.get("EMAIL_ADDRESS")
+EMAIL_APP_PASSWORD = os.environ.get("EMAIL_APP_PASSWORD")
 
 def get_db_connection():
     conn = sqlite3.connect("database.db")
@@ -21,22 +21,27 @@ def get_db_connection():
 
 def send_email(to_email, subject, body):
     try:
+        if not EMAIL_ADDRESS or not EMAIL_APP_PASSWORD:
+            print("Email skipped: EMAIL_ADDRESS or EMAIL_APP_PASSWORD missing")
+            return False
+
         msg = EmailMessage()
-        msg["Subject"] = subject
         msg["From"] = EMAIL_ADDRESS
         msg["To"] = to_email
+        msg["Subject"] = subject
         msg.set_content(body)
 
-        with smtplib.SMTP("smtp.gmail.com", 587) as server:
-            server.starttls()
-            server.login(EMAIL_ADDRESS, EMAIL_APP_PASSWORD)
-            server.send_message(msg)
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=10) as smtp:
+            smtp.login(EMAIL_ADDRESS, EMAIL_APP_PASSWORD)
+            smtp.send_message(msg)
 
-        print("Email sent successfully to", to_email)
+        print("Email sent successfully")
+        return True
 
     except Exception as e:
-        print("Email sending failed:", e)
-
+        print("Email failed but website continues:", e)
+        return False
+    
 def get_user_email(username):
     conn = get_db_connection()
 
