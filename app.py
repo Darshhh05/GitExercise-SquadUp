@@ -22,42 +22,53 @@ def get_db_connection():
 
 def send_email(to_email, subject, body):
     try:
-        if not EMAIL_ADDRESS or not EMAIL_APP_PASSWORD:
-            print("Email skipped: EMAIL_ADDRESS or EMAIL_APP_PASSWORD missing")
+        sender_email = os.environ.get("EMAIL_ADDRESS")
+        sender_password = os.environ.get("EMAIL_APP_PASSWORD")
+
+        print("EMAIL FUNCTION STARTED", flush=True)
+        print("Receiver:", to_email, flush=True)
+        print("EMAIL_ADDRESS exists:", bool(sender_email), flush=True)
+        print("EMAIL_APP_PASSWORD exists:", bool(sender_password), flush=True)
+
+        if not sender_email or not sender_password:
+            print("Email skipped: EMAIL_ADDRESS or EMAIL_APP_PASSWORD missing", flush=True)
             return False
 
         msg = EmailMessage()
-        msg["From"] = EMAIL_ADDRESS
+        msg["From"] = sender_email
         msg["To"] = to_email
         msg["Subject"] = subject
         msg.set_content(body)
 
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=10) as smtp:
-            smtp.login(EMAIL_ADDRESS, EMAIL_APP_PASSWORD)
-            smtp.send_message(msg)
+        # Try Gmail SSL port first
+        try:
+            with smtplib.SMTP_SSL("smtp.gmail.com", 465, timeout=20) as smtp:
+                smtp.login(sender_email, sender_password)
+                smtp.send_message(msg)
 
-        print("Email sent successfully")
-        return True
+            print("Email sent successfully using SSL 465", flush=True)
+            return True
+
+        except Exception as ssl_error:
+            print("SSL 465 failed:", ssl_error, flush=True)
+
+        # Try Gmail TLS port second
+        try:
+            with smtplib.SMTP("smtp.gmail.com", 587, timeout=20) as smtp:
+                smtp.starttls()
+                smtp.login(sender_email, sender_password)
+                smtp.send_message(msg)
+
+            print("Email sent successfully using TLS 587", flush=True)
+            return True
+
+        except Exception as tls_error:
+            print("TLS 587 failed:", tls_error, flush=True)
+            return False
 
     except Exception as e:
-        print("Email failed but website continues:", e)
+        print("Email failed but website continues:", e, flush=True)
         return False
-    
-def get_user_email(username):
-    conn = get_db_connection()
-
-    user = conn.execute(
-        "SELECT email FROM users WHERE username = ?",
-        (username,)
-    ).fetchone()
-
-    conn.close()
-
-    if user and user["email"]:
-        return user["email"]
-
-    return None        
-
 
 def fix_database():
     conn = get_db_connection()
@@ -1287,6 +1298,27 @@ def database_view():
     </body>
     </html>
     """
+
+@app.route("/test-email")
+def test_email():
+    if request.args.get("key") != ADMIN_PASSWORD:
+        return "Access denied", 403
+
+    to_email = request.args.get("to")
+
+    if not to_email:
+        return "Add receiver email like: /test-email?key=admin123&to=yourmail@gmail.com"
+
+    sent = send_email(
+        to_email,
+        "SquadUp Email Test",
+        "This is a test email from SquadUp. If you received this, the email feature is working."
+    )
+
+    if sent:
+        return "Email sent successfully. Check inbox/spam/promotions."
+    else:
+        return "Email failed. Check Render Logs."
 
 
 if __name__ == "__main__":
