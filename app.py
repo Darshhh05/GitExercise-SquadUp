@@ -1291,5 +1291,7 @@ def database_view():
 
 if __name__ == "__main__":
     fix_database()
-    update_database()
+update_database()
+
+if __name__ == "__main__":
     app.run(debug=True)
